@@ -1,0 +1,640 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Content Firewall REST",
+    "version": "0.1.0",
+    "description": "Route and capability inventory; complete payload schemas remain outstanding."
+  },
+  "servers": [
+    {
+      "url": "/wp-json/content-firewall/v1"
+    }
+  ],
+  "paths": {
+    "/scans": {
+      "get": {
+        "operationId": "scans",
+        "summary": "scans",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/scans/{id}": {
+      "get": {
+        "operationId": "scan",
+        "summary": "scan",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
+      }
+    },
+    "/scans/{id}/action": {
+      "post": {
+        "operationId": "act",
+        "summary": "act",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
+      }
+    },
+    "/scans/{id}/preview": {
+      "get": {
+        "operationId": "preview",
+        "summary": "preview",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "reveal_sensitive_content",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
+      }
+    },
+    "/bulk": {
+      "post": {
+        "operationId": "bulk",
+        "summary": "bulk",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/policies": {
+      "get": {
+        "operationId": "policies",
+        "summary": "policies",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/policy": {
+      "get": {
+        "operationId": "policy",
+        "summary": "policy",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/policy/save": {
+      "post": {
+        "operationId": "savePolicy",
+        "summary": "savePolicy",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/presets": {
+      "get": {
+        "operationId": "presets",
+        "summary": "presets",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/simulation": {
+      "post": {
+        "operationId": "simulate",
+        "summary": "simulate",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/simulation/history": {
+      "post": {
+        "operationId": "simulateHistory",
+        "summary": "simulateHistory",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/analytics": {
+      "get": {
+        "operationId": "analytics",
+        "summary": "analytics",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "view_content_firewall_analytics",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "health",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/providers": {
+      "get": {
+        "operationId": "providers",
+        "summary": "providers",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_providers",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/audit": {
+      "get": {
+        "operationId": "audit",
+        "summary": "audit",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "view_content_firewall_audit",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/library": {
+      "post": {
+        "operationId": "library",
+        "summary": "library",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/settings": {
+      "get": {
+        "operationId": "settings",
+        "summary": "settings",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/settings/save": {
+      "post": {
+        "operationId": "saveSettings",
+        "summary": "saveSettings",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/network-policy": {
+      "post": {
+        "operationId": "networkPolicy",
+        "summary": "networkPolicy",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_network_options",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/worker": {
+      "post": {
+        "operationId": "worker",
+        "summary": "worker",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/my-uploads": {
+      "get": {
+        "operationId": "ownScans",
+        "summary": "ownScans",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "read",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        }
+      }
+    },
+    "/scans/{id}/appeal": {
+      "post": {
+        "operationId": "appeal",
+        "summary": "appeal",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "read",
+        "responses": {
+          "200": {
+            "description": "Authorized response"
+          },
+          "400": {
+            "description": "Stable validation/configuration error"
+          },
+          "403": {
+            "description": "Authorization failure"
+          },
+          "409": {
+            "description": "Stale revision or conflict"
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "wordpressAuth": {
+        "type": "http",
+        "scheme": "basic",
+        "description": "WordPress application password or authenticated cookie plus REST nonce"
+      }
+    }
+  }
+}

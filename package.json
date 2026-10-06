@@ -1,0 +1,8 @@
+{
+  "name": "content-firewall-admin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node tools/build.mjs", "typecheck": "tsc --noEmit", "test": "vitest run", "test:e2e": "playwright test" },
+  "devDependencies": { "@axe-core/playwright": "^4.10.2", "@playwright/test": "^1.56.0", "@types/react": "^18.3.0", "@types/react-dom": "^18.3.0", "esbuild": "^0.28.2", "typescript": "^5.9.0", "vitest": "^5.0.3" }
+}

@@ -1,0 +1,19 @@
+parameters:
+    level: 6
+    paths:
+        - src
+    dynamicConstantNames:
+        - ABSPATH
+        - WP_CLI
+        - DISABLE_WP_CRON
+    bootstrapFiles:
+        - tools/static-bootstrap.php
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+    ignoreErrors:
+        # WordPress boundary arrays retain dynamic extension points; domain values are typed.
+        - identifier: missingType.iterableValue
+        # WordPress stubs intentionally describe successful parser results; runtime guards cover hostile values.
+        - identifier: function.alreadyNarrowedType
+        - identifier: isset.offset
+        - identifier: nullCoalesce.offset
+    reportUnmatchedIgnoredErrors: true

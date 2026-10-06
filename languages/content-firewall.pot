@@ -1,0 +1,378 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: content-firewall 0.1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Add condition"
+msgstr ""
+
+msgid "Add nested group"
+msgstr ""
+
+msgid "Add rule"
+msgstr ""
+
+msgid "All conditions (AND)"
+msgstr ""
+
+msgid "All records"
+msgstr ""
+
+msgid "Allow when content provider fails"
+msgstr ""
+
+msgid "Analytics"
+msgstr ""
+
+msgid "Any condition (OR)"
+msgstr ""
+
+msgid "Approve selected"
+msgstr ""
+
+msgid "Audit Log"
+msgstr ""
+
+msgid "Block"
+msgstr ""
+
+msgid "Block from"
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Choose a preset…"
+msgstr ""
+
+msgid "Close case"
+msgstr ""
+
+msgid "Comparison"
+msgstr ""
+
+msgid "Condition group"
+msgstr ""
+
+msgid "Confidence bands"
+msgstr ""
+
+msgid "Configure signed webhooks through deployment configuration. Do not include file content or extracted text in notifications."
+msgstr ""
+
+msgid "Content Firewall"
+msgstr ""
+
+msgid "Content Firewall navigation"
+msgstr ""
+
+msgid "Content Firewall queue is operational"
+msgstr ""
+
+msgid "Content Firewall upload records"
+msgstr ""
+
+msgid "Content Firewall worker needs attention"
+msgstr ""
+
+msgid "Content warning: this preview may contain sensitive or disturbing material."
+msgstr ""
+
+msgid "Created"
+msgstr ""
+
+msgid "Dashboard"
+msgstr ""
+
+msgid "Default or confidence band"
+msgstr ""
+
+msgid "Developer Tools"
+msgstr ""
+
+msgid "Developer tools"
+msgstr ""
+
+msgid "Download diagnostics"
+msgstr ""
+
+msgid "Duplicate rule"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "Enter a reason of at least three characters."
+msgstr ""
+
+msgid "Every minute"
+msgstr ""
+
+msgid "Existing media scanner"
+msgstr ""
+
+msgid "File / case"
+msgstr ""
+
+msgid "First page"
+msgstr ""
+
+msgid "Hide preview"
+msgstr ""
+
+msgid "Hold privately"
+msgstr ""
+
+msgid "Identifier"
+msgstr ""
+
+msgid "Integrations"
+msgstr ""
+
+msgid "Library scan queued."
+msgstr ""
+
+msgid "Loading Content Firewall…"
+msgstr ""
+
+msgid "Match"
+msgstr ""
+
+msgid "Media Library, REST media, AJAX uploads and sideloads use the WordPress upload gateway. Custom integrations must submit files through the governed upload interface."
+msgstr ""
+
+msgid "Media Scanner"
+msgstr ""
+
+msgid "Moderation"
+msgstr ""
+
+msgid "Moderation Queue"
+msgstr ""
+
+msgid "Moderation action recorded."
+msgstr ""
+
+msgid "Moderation queue"
+msgstr ""
+
+msgid "Moderator notes and rationale"
+msgstr ""
+
+msgid "Monitor content decisions"
+msgstr ""
+
+msgid "My Uploads"
+msgstr ""
+
+msgid "Negate condition (NOT)"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "No cases match this view."
+msgstr ""
+
+msgid "No product telemetry. Provider processing follows your site configuration."
+msgstr ""
+
+msgid "No records yet."
+msgstr ""
+
+msgid "Normalized evidence"
+msgstr ""
+
+msgid "Overview · last 30 days"
+msgstr ""
+
+msgid "Policies"
+msgstr ""
+
+msgid "Policy"
+msgstr ""
+
+msgid "Policy name"
+msgstr ""
+
+msgid "Policy version saved."
+msgstr ""
+
+msgid "Presets send concerning signals to review. Enable automatic blocking only after validating precision on your own lawful corpus."
+msgstr ""
+
+msgid "Priority"
+msgstr ""
+
+msgid "Private moderation cases"
+msgstr ""
+
+msgid "Private review. Clear policy. Safer publishing."
+msgstr ""
+
+msgid "Provider / model"
+msgstr ""
+
+msgid "Provider failure"
+msgstr ""
+
+msgid "Providers"
+msgstr ""
+
+msgid "Queue library scan"
+msgstr ""
+
+msgid "Referenced media must be approved before publishing."
+msgstr ""
+
+msgid "Refresh"
+msgstr ""
+
+msgid "Reject selected"
+msgstr ""
+
+msgid "Remove condition"
+msgstr ""
+
+msgid "Remove rule"
+msgstr ""
+
+msgid "Request failed."
+msgstr ""
+
+msgid "Require remote content moderation"
+msgstr ""
+
+msgid "Required moderation reason"
+msgstr ""
+
+msgid "Reveal sensitive preview"
+msgstr ""
+
+msgid "Revealed moderation preview"
+msgstr ""
+
+msgid "Review from"
+msgstr ""
+
+msgid "Risk signal"
+msgstr ""
+
+msgid "Rule"
+msgstr ""
+
+msgid "Rules run in priority order. File security checks always apply. Every save creates an immutable version."
+msgstr ""
+
+msgid "Run the worker using system cron for predictable moderation latency."
+msgstr ""
+
+msgid "Run worker batch"
+msgstr ""
+
+msgid "Save new version"
+msgstr ""
+
+msgid "Save settings"
+msgstr ""
+
+msgid "Scan the library in resumable batches. Existing local files remain accessible until a scan decision. Held decisions remove local public derivatives; cached and offloaded copies need separate controls."
+msgstr ""
+
+msgid "Score and scale"
+msgstr ""
+
+msgid "Security"
+msgstr ""
+
+msgid "Security and moderation records remain subject to the site retention policy. Contact the administrator for a reviewed erasure request."
+msgstr ""
+
+msgid "Security limits apply to every uploader. Configure a persistent private directory and scanner credentials in wp-config.php or environment variables."
+msgstr ""
+
+msgid "Select"
+msgstr ""
+
+msgid "Select case"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Settings saved."
+msgstr ""
+
+msgid "Signal"
+msgstr ""
+
+msgid "Simulate"
+msgstr ""
+
+msgid "Some actions failed: "
+msgstr ""
+
+msgid "Start from a preset"
+msgstr ""
+
+msgid "State"
+msgstr ""
+
+msgid "Synthetic explicit-content score"
+msgstr ""
+
+msgid "System Health"
+msgstr ""
+
+msgid "Test without publishing"
+msgstr ""
+
+msgid "The operation could not be completed. Refresh the record and check the configuration."
+msgstr ""
+
+msgid "Then"
+msgstr ""
+
+msgid "This file could not pass the required safety checks. Contact the site administrator."
+msgstr ""
+
+msgid "This upload is held by the content policy. Reference: %d. Contact the site moderator for review."
+msgstr ""
+
+msgid "Too many media references to validate in one publication."
+msgstr ""
+
+msgid "UPLOAD GOVERNANCE"
+msgstr ""
+
+msgid "Unavailable"
+msgstr ""
+
+msgid "Unscanned"
+msgstr ""
+
+msgid "Unsupported preview."
+msgstr ""
+
+msgid "Upload moderation"
+msgstr ""
+
+msgid "Uploads held here remain private. Approval publishes a security-checked derivative. Sensitive previews require an explicit reveal."
+msgstr ""
+
+msgid "Use the versioned REST API and wp content-firewall commands for automation. Diagnostics exclude credentials, raw files and OCR text."
+msgstr ""
+
+msgid "Validated calibration"
+msgstr ""
+
+msgid "Value"
+msgstr ""
+
+msgid "View"
+msgstr ""
+
+msgid "Worker batch finished."
+msgstr ""
+

@@ -1,0 +1,47 @@
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: test-only-password
+      MARIADB_ROOT_PASSWORD: test-only-root
+    tmpfs: /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  wordpress:
+    image: wordpress:6.8-php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports: ["127.0.0.1:8887:80"]
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: test-only-password
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: "define('CF_PRIVATE_DIR', '/var/cf-private'); define('WP_ENVIRONMENT_TYPE', 'development');"
+    volumes:
+      - wp:/var/www/html
+      - .:/var/www/html/wp-content/plugins/content-firewall:ro
+      - private:/var/cf-private
+  cli:
+    image: wordpress:cli-php8.3
+    depends_on: [wordpress]
+    user: "33:33"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: test-only-password
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: "define('CF_PRIVATE_DIR', '/var/cf-private'); define('WP_ENVIRONMENT_TYPE', 'development');"
+    volumes:
+      - wp:/var/www/html
+      - .:/var/www/html/wp-content/plugins/content-firewall:ro
+      - private:/var/cf-private
+volumes:
+  wp:
+  private:
