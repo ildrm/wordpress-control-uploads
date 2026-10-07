@@ -1,5 +1,5 @@
 === WordPress Content Firewall ===
-Contributors: content-firewall
+Contributors: ildrm
 Tags: upload, moderation, privacy, security
 Requires at least: 6.8
 Requires PHP: 8.2

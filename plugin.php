@@ -3,6 +3,8 @@
  * Plugin Name: WordPress Content Firewall
  * Description: Private upload governance, explainable moderation, and file security.
  * Version: 0.1.0
+ * Author: Shahin Ilderemi
+ * Author URI:  https://ildrm.com
  * Requires at least: 6.8
  * Requires PHP: 8.2
  * Author: Content Firewall Contributors
