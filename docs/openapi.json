@@ -3,7 +3,7 @@
   "info": {
     "title": "Content Firewall REST",
     "version": "0.1.0",
-    "description": "Route and capability inventory; complete payload schemas remain outstanding."
+    "description": "Generated route/capability inventory, typed requests and implemented response DTOs. UTC dates and database numeric strings are explicit; semantic validation remains enforced by the server."
   },
   "servers": [
     {
@@ -23,18 +23,292 @@
         "x-wordpress-capability": "review_content_firewall_queue",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScanSummary"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "team",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "overdue",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ]
+      }
+    },
+    "/uploads": {
+      "post": {
+        "operationId": "upload",
+        "summary": "upload",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "upload_files",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadStatus"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "One genuine multipart uploaded file; PHP/WordPress/plugin limits apply. No local path parameters.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
           }
         }
+      }
+    },
+    "/uploads/{id}": {
+      "get": {
+        "operationId": "uploadStatus",
+        "summary": "uploadStatus",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "read",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadStatus"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ]
       }
     },
     "/scans/{id}": {
@@ -49,16 +323,62 @@
         "x-wordpress-capability": "review_content_firewall_queue",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScanDetail"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -86,16 +406,62 @@
         "x-wordpress-capability": "review_content_firewall_queue",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionResult"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -108,7 +474,18 @@
               "minimum": 1
             }
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionRequest"
+              }
+            }
+          }
+        }
       }
     },
     "/scans/{id}/preview": {
@@ -123,16 +500,72 @@
         "x-wordpress-capability": "reveal_sensitive_content",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "mime": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "type": "string",
+                      "contentEncoding": "base64"
+                    }
+                  },
+                  "required": []
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -160,16 +593,76 @@
         "x-wordpress-capability": "review_content_firewall_queue",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActionResult"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkRequest"
+              }
+            }
           }
         }
       }
@@ -186,18 +679,77 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PolicySummary"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ]
       }
     },
     "/policy": {
@@ -212,16 +764,62 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -238,16 +836,73 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Policy"
+              }
+            }
           }
         }
       }
@@ -264,16 +919,65 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Policy"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -290,16 +994,170 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Decision"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulationRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/file": {
+      "post": {
+        "operationId": "simulateFile",
+        "summary": "simulateFile",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall_policies",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileSimulation"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "One genuine multipart uploaded file; PHP/WordPress/plugin limits apply. No local path parameters.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "policy": {
+                    "type": "string",
+                    "maxLength": 262144,
+                    "description": "Optional schema-1 Policy JSON; otherwise active policy."
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
           }
         }
       }
@@ -316,16 +1174,96 @@
         "x-wordpress-capability": "manage_content_firewall_policies",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "counts": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    },
+                    "after": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "external_requests": {
+                      "const": 0
+                    },
+                    "limitations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": []
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HistoryRequest"
+              }
+            }
           }
         }
       }
@@ -342,16 +1280,62 @@
         "x-wordpress-capability": "view_content_firewall_analytics",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Analytics"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -368,16 +1352,62 @@
         "x-wordpress-capability": "manage_content_firewall",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -394,16 +1424,65 @@
         "x-wordpress-capability": "manage_content_firewall_providers",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Provider"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -420,18 +1499,77 @@
         "x-wordpress-capability": "view_content_firewall_audit",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Audit"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
-        }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ]
       }
     },
     "/library": {
@@ -446,16 +1584,71 @@
         "x-wordpress-capability": "manage_content_firewall",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "queued": {
+                      "const": true
+                    },
+                    "batch": {
+                      "type": "string"
+                    }
+                  },
+                  "required": []
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -472,16 +1665,62 @@
         "x-wordpress-capability": "manage_content_firewall",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -498,16 +1737,73 @@
         "x-wordpress-capability": "manage_content_firewall",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Settings"
+              }
+            }
           }
         }
       }
@@ -524,16 +1820,73 @@
         "x-wordpress-capability": "manage_network_options",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Policy"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Policy"
+              }
+            }
           }
         }
       }
@@ -550,16 +1903,73 @@
         "x-wordpress-capability": "manage_content_firewall",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "completed": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "failed": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": []
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -576,16 +1986,496 @@
         "x-wordpress-capability": "read",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OwnerScan"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 30
+            }
+          }
+        ]
+      }
+    },
+    "/reviewers": {
+      "get": {
+        "operationId": "reviewers",
+        "summary": "reviewers",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "minimum": 0
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": []
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        ]
+      }
+    },
+    "/queue-views": {
+      "get": {
+        "operationId": "queueViews",
+        "summary": "queueViews",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QueueView"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/queue-views/save": {
+      "post": {
+        "operationId": "saveQueueViews",
+        "summary": "saveQueueViews",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "review_content_firewall_queue",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/QueueView"
+                  }
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueueViewsRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/onboarding": {
+      "get": {
+        "operationId": "onboarding",
+        "summary": "onboarding",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Onboarding"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/save": {
+      "post": {
+        "operationId": "saveOnboarding",
+        "summary": "saveOnboarding",
+        "security": [
+          {
+            "wordpressAuth": []
+          }
+        ],
+        "x-wordpress-capability": "manage_content_firewall",
+        "responses": {
+          "200": {
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Onboarding"
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingRequest"
+              }
+            }
           }
         }
       }
@@ -602,16 +2492,68 @@
         "x-wordpress-capability": "read",
         "responses": {
           "200": {
-            "description": "Authorized response"
+            "description": "Authorized response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "const": true
+                    }
+                  },
+                  "required": []
+                }
+              }
+            },
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string",
+                  "const": "private, no-store, max-age=0"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Stable validation/configuration error"
+            "description": "Stable validation/configuration error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "403": {
-            "description": "Authorization failure"
+            "description": "Authorization failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           },
           "409": {
-            "description": "Stale revision or conflict"
+            "description": "Stale revision or conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Record not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -624,11 +2566,1737 @@
               "minimum": 1
             }
           }
-        ]
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "JSON body <=256 KiB; server also validates semantic constraints.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppealRequest"
+              }
+            }
+          }
+        }
       }
     }
   },
   "components": {
+    "schemas": {
+      "ActionRequest": {
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject",
+              "quarantine",
+              "delete",
+              "rescan",
+              "fingerprint",
+              "assign",
+              "note",
+              "escalate"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2000,
+            "description": "At least three non-whitespace characters."
+          },
+          "owner_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Must be true for delete."
+          },
+          "assignment": {
+            "$ref": "#/components/schemas/Assignment"
+          }
+        },
+        "required": [
+          "revision",
+          "action",
+          "reason"
+        ]
+      },
+      "AppealRequest": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2000,
+            "description": "At least three non-whitespace characters."
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{1,95}$"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "provider": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+          },
+          "model": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "hard_security": {
+            "type": "boolean"
+          },
+          "scale": {
+            "type": "string",
+            "enum": [
+              "probability",
+              "ordinal",
+              "severity",
+              "deterministic"
+            ]
+          },
+          "region": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "Normalized x,y,width,height entirely inside the image."
+          }
+        },
+        "required": [
+          "category",
+          "confidence"
+        ]
+      },
+      "Condition": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "group": {
+                "type": "string",
+                "enum": [
+                  "AND",
+                  "OR",
+                  "NOT"
+                ]
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Condition"
+                },
+                "minItems": 1,
+                "maxItems": 32
+              }
+            },
+            "required": [
+              "group",
+              "children"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_.-]{0,95}$"
+              },
+              "op": {
+                "type": "string",
+                "enum": [
+                  "eq",
+                  "ne",
+                  "gt",
+                  "gte",
+                  "lt",
+                  "lte",
+                  "in",
+                  "contains",
+                  "between",
+                  "exists",
+                  "domain",
+                  "regex"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "null",
+                  "array"
+                ],
+                "maxLength": 512,
+                "maxItems": 100,
+                "items": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "field",
+              "op"
+            ]
+          }
+        ],
+        "description": "Depth <=8; <=256 nodes and <=16 KiB per condition. NOT has one child. Only exists omits value; numeric comparisons require finite numbers; between requires an ordered pair."
+      },
+      "Rule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": -1000000,
+            "maximum": 1000000
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "condition": {
+            "$ref": "#/components/schemas/Condition"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "SANITIZE",
+              "REVIEW",
+              "QUARANTINE",
+              "BLOCK"
+            ]
+          },
+          "effects": {
+            "type": "array",
+            "maxItems": 0
+          }
+        },
+        "required": [
+          "id",
+          "condition",
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "Band": {
+        "type": "object",
+        "properties": {
+          "review": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "block": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "calibrated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "review",
+          "block"
+        ]
+      },
+      "Options": {
+        "type": "object",
+        "properties": {
+          "requires_content": {
+            "type": "boolean"
+          },
+          "requires_text": {
+            "type": "boolean"
+          },
+          "consensus": {
+            "type": "boolean"
+          },
+          "failure_mode": {
+            "type": "string",
+            "enum": [
+              "QUARANTINE",
+              "FAIL_OPEN",
+              "FAIL_CLOSED"
+            ]
+          },
+          "metadata": {
+            "type": "string",
+            "enum": [
+              "Privacy Safe"
+            ]
+          },
+          "qr_mode": {
+            "type": "string",
+            "enum": [
+              "allow",
+              "review",
+              "block-all"
+            ]
+          },
+          "region": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "patterns": {
+            "type": "object",
+            "maxProperties": 32,
+            "additionalProperties": {
+              "type": "string",
+              "maxLength": 512
+            }
+          },
+          "domains": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "Policy": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "const": 1
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "rules": {
+            "type": "array",
+            "maxItems": 128,
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            }
+          },
+          "default": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "SANITIZE",
+              "REVIEW",
+              "QUARANTINE",
+              "BLOCK"
+            ]
+          },
+          "shadow": {
+            "type": "boolean"
+          },
+          "bands": {
+            "type": "object",
+            "maxProperties": 128,
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Band"
+            }
+          },
+          "options": {
+            "$ref": "#/components/schemas/Options"
+          }
+        },
+        "required": [
+          "schema",
+          "id",
+          "name",
+          "rules"
+        ],
+        "additionalProperties": false
+      },
+      "Settings": {
+        "type": "object",
+        "properties": {
+          "require_malware": {
+            "type": "boolean"
+          },
+          "delete_on_uninstall": {
+            "type": "boolean"
+          },
+          "publication_gate": {
+            "type": "boolean"
+          },
+          "max_bytes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 104857600
+          },
+          "max_pixels": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 24000000
+          },
+          "monthly_cap": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000000
+          },
+          "upload_per_hour": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "allowed_extensions": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "enum": [
+                "jpg",
+                "jpeg",
+                "png",
+                "webp",
+                "gif",
+                "avif",
+                "svg",
+                "pdf",
+                "txt",
+                "zip",
+                "docx",
+                "xlsx",
+                "pptx",
+                "mp3",
+                "wav",
+                "ogg",
+                "m4a",
+                "mp4",
+                "webm"
+              ]
+            }
+          },
+          "privacy_retain_audit": {
+            "type": "boolean"
+          },
+          "onboarding_complete": {
+            "type": "boolean"
+          },
+          "enable_documents": {
+            "type": "boolean"
+          },
+          "enable_temporal": {
+            "type": "boolean"
+          },
+          "enable_provenance": {
+            "type": "boolean"
+          },
+          "sla_hours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8760
+          },
+          "retention": {
+            "$ref": "#/components/schemas/Retention"
+          },
+          "processing": {
+            "$ref": "#/components/schemas/Processing"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "Retention": {
+        "type": "object",
+        "properties": {
+          "private_files_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          },
+          "safe_metadata_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          },
+          "blocked_metadata_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          },
+          "audit_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          },
+          "analytics_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          },
+          "job_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3650
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "Processing": {
+        "type": "object",
+        "properties": {
+          "max_duration": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "max_frames": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 32
+          },
+          "max_pages": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "sampling": {
+            "type": "string",
+            "enum": [
+              "uniform",
+              "scene",
+              "adaptive"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "Assignment": {
+        "type": "object",
+        "properties": {
+          "team": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9 _.-]{0,64}$"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "sla_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "UTC YYYY-MM-DD HH:MM:SS, from now through 366 days."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "QueueView": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]{1,64}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "state": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "integer",
+            "minimum": -1
+          },
+          "team": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9 _.-]{0,64}$"
+          },
+          "overdue": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "state",
+          "owner",
+          "team",
+          "overdue"
+        ],
+        "additionalProperties": false
+      },
+      "QueueViewsRequest": {
+        "type": "object",
+        "properties": {
+          "views": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "$ref": "#/components/schemas/QueueView"
+            }
+          }
+        },
+        "required": [
+          "views"
+        ],
+        "additionalProperties": false
+      },
+      "OnboardingRequest": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "preset": {
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Settings"
+          },
+          "complete": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "step"
+        ],
+        "additionalProperties": false
+      },
+      "Decision": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "ALLOW",
+              "SANITIZE",
+              "REVIEW",
+              "QUARANTINE",
+              "BLOCK"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "policy_id": {
+            "type": "string"
+          },
+          "policy_version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "risk": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "shadow": {
+            "type": "boolean"
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "action",
+          "reasons",
+          "rules",
+          "policy_id",
+          "policy_version",
+          "risk",
+          "shadow"
+        ]
+      },
+      "ScanSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "attachment_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "user_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "revision": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "bytes": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "policy_version": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "correlation": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "mime": {
+            "type": "string"
+          },
+          "policy_id": {
+            "type": "string"
+          },
+          "risk": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          },
+          "updated_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          },
+          "owner_id": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "team": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "sla_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "revision"
+        ]
+      },
+      "Note": {
+        "type": "object",
+        "properties": {
+          "actor_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          }
+        },
+        "required": []
+      },
+      "Appeal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "status": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          },
+          "resolved_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": []
+      },
+      "Case": {
+        "type": "object",
+        "properties": {
+          "owner_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "team": {
+            "type": "string"
+          },
+          "priority": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "sla_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": []
+      },
+      "ScanDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ScanSummary"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "site_id": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  }
+                ]
+              },
+              "context_json": {
+                "type": "string"
+              },
+              "signals_json": {
+                "type": "string"
+              },
+              "expires_at": {
+                "type": "string",
+                "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+              },
+              "metadata_erased": {
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9]+$"
+                  }
+                ]
+              },
+              "findings": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Finding"
+                }
+              },
+              "decision": {
+                "$ref": "#/components/schemas/Decision"
+              },
+              "notes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Note"
+                }
+              },
+              "appeals": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Appeal"
+                }
+              },
+              "case": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Case"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": []
+          }
+        ]
+      },
+      "OwnerScan": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "attachment_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          },
+          "updated_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          }
+        },
+        "required": []
+      },
+      "PolicySummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "policy_id": {
+            "type": "string"
+          },
+          "version": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          }
+        },
+        "required": []
+      },
+      "ActionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Provider": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "mimes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "regions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "model": {
+                "type": "string"
+              },
+              "cacheable": {
+                "type": "boolean"
+              }
+            },
+            "required": []
+          },
+          "health": {
+            "type": "object",
+            "properties": {
+              "failures": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "until": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": []
+          }
+        },
+        "required": []
+      },
+      "QueueCount": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "count": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          }
+        },
+        "required": []
+      },
+      "Health": {
+        "type": "object",
+        "properties": {
+          "plugin": {
+            "type": "string"
+          },
+          "wordpress": {
+            "type": "string"
+          },
+          "php": {
+            "type": "string"
+          },
+          "database": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "environment": {
+            "type": "string"
+          },
+          "site_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "processors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "configured": {
+                  "type": "boolean"
+                },
+                "executable": {
+                  "type": "boolean"
+                }
+              },
+              "required": []
+            }
+          },
+          "queue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueueCount"
+            }
+          },
+          "worker_last_run": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "recovery_operations": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Provider"
+            }
+          },
+          "extensions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "malware_configured": {
+            "type": "boolean"
+          },
+          "malware_required": {
+            "type": "boolean"
+          },
+          "persistent_private_storage": {
+            "type": "boolean"
+          },
+          "cron_enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": []
+      },
+      "Onboarding": {
+        "type": "object",
+        "properties": {
+          "step": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "network_enforced": {
+            "type": "boolean"
+          },
+          "policy": {
+            "$ref": "#/components/schemas/Policy"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Settings"
+          },
+          "health": {
+            "$ref": "#/components/schemas/Health"
+          }
+        },
+        "required": []
+      },
+      "Audit": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "actor_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "object_id": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          },
+          "event": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          }
+        },
+        "required": []
+      },
+      "Analytics": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "state": {
+                  "type": "string"
+                },
+                "count": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  ]
+                }
+              },
+              "required": []
+            }
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "requests": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  ]
+                },
+                "failures": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  ]
+                },
+                "estimated_cost": {
+                  "type": [
+                    "number",
+                    "string"
+                  ]
+                },
+                "mean_latency_ms": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": []
+            }
+          },
+          "queue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueueCount"
+            }
+          },
+          "disagreement": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                },
+                "reviewed": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  ]
+                },
+                "changed": {
+                  "oneOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^[0-9]+$"
+                    }
+                  ]
+                }
+              },
+              "required": []
+            }
+          }
+        },
+        "required": []
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "integer"
+              },
+              "code": {
+                "type": "string"
+              }
+            },
+            "required": []
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "data"
+        ]
+      },
+      "BulkRequest": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject",
+              "quarantine",
+              "delete",
+              "rescan",
+              "fingerprint",
+              "assign",
+              "note",
+              "escalate"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2000,
+            "description": "At least three non-whitespace characters."
+          },
+          "owner_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Must be true for delete."
+          },
+          "assignment": {
+            "$ref": "#/components/schemas/Assignment"
+          },
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 50,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "revision": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "id",
+                "revision"
+              ]
+            }
+          }
+        },
+        "required": [
+          "action",
+          "reason",
+          "items"
+        ]
+      },
+      "SimulationRequest": {
+        "type": "object",
+        "properties": {
+          "policy": {
+            "$ref": "#/components/schemas/Policy"
+          },
+          "signals": {
+            "type": "object"
+          },
+          "findings": {
+            "type": "array",
+            "maxItems": 256,
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            }
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "HistoryRequest": {
+        "type": "object",
+        "properties": {
+          "policy": {
+            "$ref": "#/components/schemas/Policy"
+          },
+          "after": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "policy"
+        ]
+      },
+      "UploadStatus": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "state": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string",
+            "enum": [
+              "uploading",
+              "security_check",
+              "content_check",
+              "pending_publication",
+              "approved",
+              "pending_review",
+              "rejected",
+              "failed",
+              "expired",
+              "held",
+              "superseded"
+            ]
+          },
+          "attachment_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "updated_at": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$"
+          },
+          "review_available": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "stage",
+          "attachment_id",
+          "updated_at",
+          "review_available"
+        ]
+      },
+      "FileSimulation": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "$ref": "#/components/schemas/Decision"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            }
+          },
+          "providers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string"
+                },
+                "model": {
+                  "type": "string"
+                },
+                "error": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "duration_ms": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "estimated_cost": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "language": {
+                  "type": "string"
+                }
+              },
+              "required": []
+            }
+          },
+          "signals": {
+            "type": "object"
+          },
+          "duration_ms": {
+            "type": "number",
+            "minimum": 0
+          },
+          "estimated_cost": {
+            "type": "number",
+            "minimum": 0
+          },
+          "published": {
+            "const": false
+          }
+        },
+        "required": [
+          "decision",
+          "findings",
+          "providers",
+          "signals",
+          "duration_ms",
+          "estimated_cost",
+          "published"
+        ]
+      }
+    },
     "securitySchemes": {
       "wordpressAuth": {
         "type": "http",

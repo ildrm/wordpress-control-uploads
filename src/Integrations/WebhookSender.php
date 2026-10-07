@@ -8,7 +8,7 @@ final class WebhookSender
     public function enqueue(int $scanId, \ContentFirewall\Domain\Decision $decision): void
     {
         if (Services::secret('CF_WEBHOOK_URL') === '' || strlen(Services::secret('CF_WEBHOOK_SECRET')) < 32) { return; }
-        $event = ['schema' => 1, 'event_id' => bin2hex(random_bytes(16)), 'event' => 'scan.completed', 'site_id' => $this->s->siteId, 'scan_id' => $scanId, 'decision' => $decision->action->value, 'policy' => $decision->policyId, 'version' => $decision->policyVersion];
+        $event = ['schema' => 1, 'event_id' => bin2hex(random_bytes(16)), 'event' => 'scan.completed', 'site_id' => $this->s->siteId, 'scan_id' => $scanId, 'decision' => $decision->action->value, 'shadow' => $decision->shadow, 'enforced_action' => $decision->shadow ? 'ALLOW' : $decision->action->value, 'policy' => $decision->policyId, 'version' => $decision->policyVersion];
         $this->s->jobs->enqueue('webhook', $event, 'webhook:' . $event['event_id']);
     }
     public function send(array $payload): void

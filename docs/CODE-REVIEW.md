@@ -1,5 +1,7 @@
 # Role-based code review and fixes — 2026-10-06
 
+This is a historical review snapshot. Current implementation status and exact executed evidence are maintained in [RELEASE-STATUS.md](RELEASE-STATUS.md) and [RELEASE-REPORT.md](RELEASE-REPORT.md).
+
 This review examined the existing engineering implementation against the implementation roles in the source request. Findings below are verified code defects addressed in this pass. This is a self-review with automated regression evidence, not an independent security audit or full-product acceptance. No additional agents were used.
 
 ## Fixed findings
@@ -51,7 +53,7 @@ The CI WordPress matrix also contains 6.9.4, but this review did not reexecute t
 
 The original complete-product requirements remain open. This pass does not implement document CDR, video/audio moderation, C2PA/authenticity models, representative moderation evaluation, metadata presets beyond Privacy Safe, complete privacy export/erasure and per-class retention, third-party/offload adapters, full enterprise provisioning, full appeals/assignment UX, complete translation or manual accessibility audits.
 
-Publication still spans filesystem and database transactions. Locks, random destination names, retries and cleanup improve ordinary failures, but process termination can leave orphan public derivatives or incomplete attachment metadata. Withdrawal I/O failures can remove only part of a derivative set before reporting failure; filesystem changes cannot roll back with SQL. A durable publication/withdrawal recovery protocol and server-level private serving boundary remain production gates.
+At this earlier review, publication still spanned filesystem and database transactions without durable recovery intents. The 2026-10-07 [production readiness review](PRODUCTION-REVIEW.md) subsequently implemented local publication/withdrawal intents and tested recovery using actual process termination, metadata repair and replacement-file guards. Filesystem changes still cannot roll back with SQL; power-loss/storage acceptance and a server-level private serving boundary remain production gates. The earlier counts above are historical; RELEASE-REPORT.md records current evidence.
 
 Local withdrawal cannot revoke CDN/browser caches, third-party/offloaded copies, external URLs or downloads. Unsupported/missing/shared primary file locations return an error. Legacy library inputs rejected before a scan record can be created are marked pending and audited; operators must review those items. REST publication checks do not cover classic/custom publishing paths or every possible URL/shortcode reference.
 

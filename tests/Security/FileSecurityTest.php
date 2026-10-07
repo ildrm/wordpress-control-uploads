@@ -38,5 +38,17 @@ final class FileSecurityTest extends TestCase
     }
     public function testPrivateStorageRejectsPublicRoot(): void { $this->expectException(\RuntimeException::class); new PrivateStorage($this->dir . '/uploads', [$this->dir]); }
     public function testPrivateAndMappedIpsRejected(): void { foreach (['127.0.0.1','10.0.0.1','169.254.169.254','192.168.1.1','::1','fc00::1','fe80::1','::ffff:127.0.0.1','100.65.0.1'] as $ip) { self::assertFalse(UrlGuard::publicIp($ip), $ip); } self::assertTrue(UrlGuard::publicIp('8.8.8.8')); }
+    public function testSpecialPurposeAndTransitionIpsAreNotScannerDestinations(): void
+    {
+        foreach (['192.0.2.1','198.51.100.1','203.0.113.1','198.18.0.1','224.0.0.1','2001:db8::1','2002:7f00:1::1','2001:0:4136:e378:8000:63bf:3fff:fdd2','3fff::1'] as $ip) { self::assertFalse(UrlGuard::publicIp($ip), $ip); }
+        self::assertTrue(UrlGuard::publicIp('2001:4860:4860::8888')); self::assertTrue(UrlGuard::publicIp('2606:4700:4700::1111'));
+    }
+    public function testTemporaryWorkAndCleanupRemainTenantScoped(): void
+    {
+        $store = new PrivateStorage($this->dir . '/private'); $first = $store->temporary(1); $second = $store->temporary(2);
+        self::assertStringContainsString('/1/work/work-', $first); self::assertStringContainsString('/2/work/work-', $second);
+        touch($first, time()-86401); self::assertSame(1,$store->cleanupTemporary(1)); self::assertFileDoesNotExist($first); self::assertFileExists($second);
+        $store->purgeTenant(1); self::assertFileDoesNotExist($first); self::assertFileExists($second);
+    }
     public function testPerceptualFingerprintDistance(): void { $file = (new FileInspector())->inspect($this->image(), 'valid.png'); $hash = (new ImageProcessor())->fingerprint($file); self::assertSame(0, ImageProcessor::distance($hash, $hash)); self::assertSame(64, ImageProcessor::distance('0000000000000000', 'ffffffffffffffff')); }
 }

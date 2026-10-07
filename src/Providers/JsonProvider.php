@@ -26,7 +26,7 @@ abstract class JsonProvider implements Provider
             $data = json_decode($reply['body'], true, 32, JSON_THROW_ON_ERROR);
             if (!is_array($data)) { throw new \RuntimeException('PROVIDER.SCHEMA'); }
             $result = $this->parse($data);
-            return new ProviderResult($result->provider, $result->model, $result->findings, $result->error, $result->retryable, (microtime(true) - $start) * 1000, $result->estimatedCost, $result->text, $result->codes);
+            return new ProviderResult($result->provider, $result->model, $result->findings, $result->error, $result->retryable, (microtime(true) - $start) * 1000, $result->estimatedCost, $result->text, $result->codes, $result->language);
         } catch (\Throwable $e) {
             $code = $e instanceof \RuntimeException && preg_match('/^[A-Z]+\.[A-Z_]+$/D', $e->getMessage()) ? $e->getMessage() : 'PROVIDER.SCHEMA';
             return new ProviderResult($this->id(), $this->capabilities()['model'], [], $code, $code === 'PROVIDER.TRANSPORT', (microtime(true) - $start) * 1000);

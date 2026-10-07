@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 // Execute inside an isolated real WordPress installation; never on production data.
-if (!defined('ABSPATH')) { require (getenv('CF_WP_ROOT') ?: '/var/www/html') . '/wp-load.php'; }
+require __DIR__ . '/bootstrap.php';
 if (wp_get_environment_type() !== 'development') { throw new RuntimeException('Integration tests require development environment.'); }
 require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/media.php'; require_once ABSPATH . 'wp-admin/includes/image.php';
 use ContentFirewall\Bootstrap\Services;
@@ -10,7 +10,7 @@ use ContentFirewall\Policy\Presets;
 use ContentFirewall\Application\{Publisher, ReviewService};
 wp_set_current_user(1); global $wpdb; $passed = 0;
 $check = static function (bool $condition, string $name) use (&$passed): void { if (!$condition) { throw new RuntimeException('FAIL: ' . $name); } $passed++; echo 'PASS: ' . $name . PHP_EOL; };
-$s = new Services($wpdb); $s->tables->migrate(); $s->tables->migrate(); $check((int)get_option('cf_schema_version') === 1, 'Repeatable migration');
+$s = new Services($wpdb); $s->tables->migrate(); $s->tables->migrate(); $check((int)get_option('cf_schema_version') === ContentFirewall\Persistence\Tables::VERSION, 'Repeatable migration');
 $s->policies->save((new Presets())->make('Security Only')->toArray(), 1);
 $dir = sys_get_temp_dir() . '/cf-integration-' . bin2hex(random_bytes(6)); mkdir($dir, 0700);
 $image = static function (string $name = 'image.png') use ($dir): string { $path = $dir . '/' . $name; $im = imagecreatetruecolor(40,20); imagefill($im,0,0,imagecolorallocate($im,24,120,160)); imagepng($im,$path); return $path; };

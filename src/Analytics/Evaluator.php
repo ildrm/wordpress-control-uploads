@@ -6,11 +6,12 @@ final class Evaluator
     /** An independently labeled corpus is required; overrides alone are not a representative sample. */
     public function evaluate(array $examples, float $threshold = 0.98): array
     {
+        if (!is_finite($threshold) || $threshold < 0 || $threshold > 1) { throw new \InvalidArgumentException('VALIDATION.THRESHOLD'); }
         $tp = $fp = $tn = $fn = $unknown = 0;
         foreach ($examples as $example) {
             if (!isset($example['label']) || !is_bool($example['label'])) { throw new \InvalidArgumentException('VALIDATION.LABEL'); }
             if (!isset($example['score'])) { $unknown++; continue; }
-            if (!is_numeric($example['score']) || $example['score'] < 0 || $example['score'] > 1) { throw new \InvalidArgumentException('VALIDATION.SCORE'); }
+            if (!is_numeric($example['score']) || !is_finite((float)$example['score']) || $example['score'] < 0 || $example['score'] > 1) { throw new \InvalidArgumentException('VALIDATION.SCORE'); }
             $predicted = $example['score'] >= $threshold;
             if ($predicted && $example['label']) { $tp++; } elseif ($predicted) { $fp++; } elseif ($example['label']) { $fn++; } else { $tn++; }
         }

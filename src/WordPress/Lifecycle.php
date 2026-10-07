@@ -18,11 +18,16 @@ final class Lifecycle
     }
     public static function site(\wpdb $db): void
     {
+        self::requirements();
         (new Tables($db))->migrate(); $admin = get_role('administrator');
         if ($admin) { foreach (self::CAPS as $cap) { $admin->add_cap($cap); } }
         if (!wp_next_scheduled('cf_worker_tick')) { wp_schedule_event(time() + 60, 'cf_minute', 'cf_worker_tick'); }
         if (!wp_next_scheduled('cf_retention_tick')) { wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', 'cf_retention_tick'); }
-        add_option('cf_settings', ['require_malware' => false, 'max_bytes' => 52428800, 'max_pixels' => 24000000, 'monthly_cap' => 10000, 'upload_per_hour' => 100, 'delete_on_uninstall' => false], '', false);
+        add_option('cf_settings', \ContentFirewall\Configuration\Settings::DEFAULTS, '', false);
+    }
+    public static function requirements(): void
+    {
+        foreach (['fileinfo', 'mbstring', 'sodium'] as $extension) { if (!extension_loaded($extension)) { throw new \RuntimeException('CONFIGURATION.PHP_EXTENSIONS'); } }
     }
     public static function deactivate(bool $networkWide = false): void
     {

@@ -20,9 +20,7 @@ final class PrivateStorage
     public function put(string $source, int $siteId, ?string $expectedHash = null): string
     {
         if ($siteId < 1 || !is_file($source) || is_link($source)) { throw new \RuntimeException('STORAGE.SOURCE'); }
-        $dir = $this->root . '/' . $siteId;
-        if (is_link($dir) || (!is_dir($dir) && !mkdir($dir, 0700))) { throw new \RuntimeException('STORAGE.TENANT'); }
-        if ((fileperms($dir) & 0077) !== 0) { throw new \RuntimeException('STORAGE.PERMISSIONS'); }
+        $dir = $this->tenant($siteId);
         $id = bin2hex(random_bytes(32)); $dest = $dir . '/' . $id;
         $input = fopen($source, 'rb'); $output = fopen($dest, 'x+b');
         if (!$input || !$output) { if ($input) { fclose($input); } if ($output) { fclose($output); } throw new \RuntimeException('STORAGE.COPY'); }
@@ -44,8 +42,77 @@ final class PrivateStorage
     public function delete(string $id, int $siteId): void { $path = $this->path($id, $siteId); if (!unlink($path)) { throw new \RuntimeException('STORAGE.DELETE'); } }
     public function temporary(int $siteId): string
     {
-        $empty = tempnam($this->root, 'work-');
+        $empty = tempnam($this->subdirectory($siteId, 'work'), 'work-');
         if ($empty === false) { throw new \RuntimeException('STORAGE.TEMP'); }
         chmod($empty, 0600); return $empty;
+    }
+    public function journalDirectory(int $siteId): string
+    {
+        return $this->subdirectory($siteId, 'operations');
+    }
+    public function workspace(int $siteId): string
+    {
+        $directory = $this->subdirectory($siteId, 'work') . '/work-' . bin2hex(random_bytes(12));
+        if (!mkdir($directory, 0700)) { throw new \RuntimeException('STORAGE.TEMP'); } return $directory;
+    }
+    public function removeWorkspace(string $directory, int $siteId): void
+    {
+        $base = $this->subdirectory($siteId, 'work');
+        if (is_link($directory) || realpath(dirname($directory)) !== $base || !preg_match('/^work-[a-zA-Z0-9]+$/D', basename($directory)) || realpath($directory) !== $directory) { throw new \RuntimeException('STORAGE.TEMP'); }
+        $visited = 0;
+        foreach (new \DirectoryIterator($directory) as $file) {
+            if ($file->isDot()) { continue; }
+            if (++$visited > 1000 || $file->isLink() || !$file->isFile() || !preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,120}$/D', $file->getFilename()) || str_contains($file->getFilename(), '..') || !unlink($file->getPathname())) { throw new \RuntimeException('STORAGE.DELETE'); }
+        }
+        if (!rmdir($directory)) { throw new \RuntimeException('STORAGE.DELETE'); }
+    }
+    private function subdirectory(int $siteId, string $name): string
+    {
+        $directory = $this->tenant($siteId) . '/' . $name;
+        if (is_link($directory) || (!is_dir($directory) && !mkdir($directory, 0700) && !is_dir($directory)) || realpath($directory) !== $directory || (fileperms($directory) & 0077) !== 0) { throw new \RuntimeException('STORAGE.PERMISSIONS'); }
+        return $directory;
+    }
+    public function cleanupTemporary(int $siteId, int $limit = 100): int
+    {
+        $deleted = $visited = 0;
+        foreach (new \DirectoryIterator($this->subdirectory($siteId, 'work')) as $entry) {
+            if (++$visited > 1000 || $deleted >= max(1, min(1000, $limit))) { break; }
+            if ($entry->isDot()) { continue; }
+            if ($entry->isLink() || !preg_match('/^work-[a-zA-Z0-9]+$/D', $entry->getFilename())) { throw new \RuntimeException('STORAGE.TEMP'); }
+            $modified = @filemtime($entry->getPathname());
+            if ($modified !== false && $modified < time() - 86400) {
+                if ($entry->isDir()) { $this->removeWorkspace($entry->getPathname(), $siteId); }
+                elseif (!$entry->isFile() || (!@unlink($entry->getPathname()) && file_exists($entry->getPathname()))) { throw new \RuntimeException('STORAGE.DELETE'); }
+                $deleted++;
+            }
+        }
+        return $deleted;
+    }
+    /** Explicit uninstall cleanup; refuses unexpected paths instead of recursive blind deletion. */
+    public function purgeTenant(int $siteId): void
+    {
+        $directory = $this->tenant($siteId);
+        foreach (new \DirectoryIterator($directory) as $entry) {
+            if ($entry->isDot()) { continue; }
+            if ($entry->isLink()) { throw new \RuntimeException('STORAGE.TENANT'); }
+            if (in_array($entry->getFilename(), ['operations', 'work'], true) && $entry->isDir()) {
+                $operations = $this->subdirectory($siteId, $entry->getFilename());
+                $pattern = $entry->getFilename() === 'operations' ? '/^(publish|withdraw)-\d+\.json$/D' : '/^work-[a-zA-Z0-9]+$/D';
+                foreach (new \DirectoryIterator($operations) as $operation) {
+                    if ($operation->isDot()) { continue; }
+                    if ($entry->getFilename() === 'work' && $operation->isDir() && !$operation->isLink() && preg_match($pattern, $operation->getFilename())) { $this->removeWorkspace($operation->getPathname(), $siteId); }
+                    elseif ($operation->isLink() || !$operation->isFile() || !preg_match($pattern, $operation->getFilename()) || !unlink($operation->getPathname())) { throw new \RuntimeException('STORAGE.DELETE'); }
+                }
+                if (!rmdir($operations)) { throw new \RuntimeException('STORAGE.DELETE'); }
+            } elseif (!$entry->isFile() || !preg_match('/^(?:[a-f0-9]{64}|work-[a-zA-Z0-9]+)$/D', $entry->getFilename()) || !unlink($entry->getPathname())) { throw new \RuntimeException('STORAGE.DELETE'); }
+        }
+        if (!rmdir($directory)) { throw new \RuntimeException('STORAGE.DELETE'); }
+    }
+    private function tenant(int $siteId): string
+    {
+        if ($siteId < 1) { throw new \RuntimeException('STORAGE.TENANT'); }
+        $directory = $this->root . '/' . $siteId;
+        if (is_link($directory) || (!is_dir($directory) && !mkdir($directory, 0700) && !is_dir($directory)) || realpath($directory) !== $directory || (fileperms($directory) & 0077) !== 0) { throw new \RuntimeException('STORAGE.PERMISSIONS'); }
+        return $directory;
     }
 }

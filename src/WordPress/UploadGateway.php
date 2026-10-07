@@ -42,14 +42,12 @@ final class UploadGateway
             $row = $s->scans->get($id);
             $descriptor = $s->inspector->inspect($s->storage->path($row['private_key'], $s->siteId), $row['file_name'], $row['mime']);
             if (!hash_equals($row['sha256'], $descriptor->sha256)) { throw new \RuntimeException('STORAGE.HASH_CHANGED'); }
-            if ($descriptor->width > 0) {
-                $temp = $s->storage->temporary($s->siteId);
-                try { (new ImageProcessor())->reencode($descriptor, $temp, 0); if (!copy($temp, $file['tmp_name'])) { throw new \RuntimeException('STORAGE.DERIVATIVE'); } $file['size'] = filesize($file['tmp_name']); }
-                finally { if (is_file($temp)) { unlink($temp); } }
-            } elseif ($descriptor->mime === 'image/svg+xml') {
-                $safe = (new \ContentFirewall\Security\SvgSanitizer())->sanitize((string)file_get_contents($descriptor->path)); if (file_put_contents($file['tmp_name'], $safe) === false) { throw new \RuntimeException('STORAGE.DERIVATIVE'); } $file['size'] = strlen($safe);
-            } elseif ($descriptor->mime !== 'text/plain') { throw new \RuntimeException('SECURITY.DOCUMENT_REVIEW'); }
-            elseif (!copy($descriptor->path, $file['tmp_name'])) { throw new \RuntimeException('STORAGE.DERIVATIVE'); }
+            $temp = $s->storage->temporary($s->siteId); $policy = $s->policies->get($row['policy_id'], (int)$row['policy_version']);
+            try {
+                $builder = new \ContentFirewall\Media\DerivativeBuilder($s->documents, $s->temporal);
+                $builder->build($descriptor, $temp, $row['state'] === State::Sanitizing->value, $s->scans->findings($id), $policy->options['patterns'] ?? [], $builder->categories($policy, $decision->rules));
+                if (!copy($temp, $file['tmp_name'])) { throw new \RuntimeException('STORAGE.DERIVATIVE'); } $file['size'] = filesize($file['tmp_name']);
+            } finally { if (is_file($temp)) { unlink($temp); } }
             $this->accepted[hash_file('sha256', $file['tmp_name'])][] = $id;
         } catch (\Throwable $e) {
             if ($s) { try { $s->audit->record('upload.failure', 0, get_current_user_id(), ['code' => \ContentFirewall\Application\ScanService::errorCode($e)]); } catch (\Throwable) {} }

@@ -6,32 +6,37 @@ final class Schema
 {
     public function parse(array $data): Policy
     {
-        if (($data['schema'] ?? null) !== 1 || !isset($data['id'], $data['name'], $data['rules']) || !is_string($data['id']) || !preg_match('/^[a-zA-Z0-9_-]{1,64}$/D', $data['id']) || !is_string($data['name']) || strlen($data['name']) > 160 || !is_array($data['rules']) || count($data['rules']) > 128) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
+        try { $encoded = json_encode($data, JSON_THROW_ON_ERROR); } catch (\JsonException) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
+        if (strlen($encoded) > 262144 || array_diff(array_keys($data), ['schema', 'id', 'version', 'name', 'rules', 'default', 'shadow', 'bands', 'options']) || in_array(null, $data, true)) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
+        if (($data['schema'] ?? null) !== 1 || !isset($data['id'], $data['name'], $data['rules']) || !is_string($data['id']) || !preg_match('/^[a-zA-Z0-9_-]{1,64}$/D', $data['id']) || !is_string($data['name']) || trim($data['name']) === '' || strlen($data['name']) > 160 || !is_array($data['rules']) || !array_is_list($data['rules']) || count($data['rules']) > 128) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
         if (!is_bool($data['shadow'] ?? false) || !is_int($data['version'] ?? 1) || ($data['version'] ?? 1) < 1 || !is_array($data['bands'] ?? []) || !is_array($data['options'] ?? [])) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
         $ids = [];
         foreach ($data['rules'] as $rule) {
             if (!is_array($rule) || !isset($rule['id'], $rule['condition'], $rule['action']) || !is_string($rule['id']) || !preg_match('/^[a-zA-Z0-9_-]{1,64}$/D', $rule['id']) || isset($ids[$rule['id']]) || !is_int($rule['priority'] ?? 0) || !is_bool($rule['enabled'] ?? true)) { throw new \InvalidArgumentException('POLICY.RULE'); }
-            $ids[$rule['id']] = true; new Condition($rule['condition']); Action::from($rule['action']);
+            if (array_diff(array_keys($rule), ['id', 'condition', 'action', 'priority', 'enabled', 'effects']) || in_array(null, $rule, true) || !is_array($rule['condition']) || !is_string($rule['action']) || !Action::tryFrom($rule['action']) || abs($rule['priority'] ?? 0) > 1000000) { throw new \InvalidArgumentException('POLICY.RULE'); }
+            $ids[$rule['id']] = true; new Condition($rule['condition']);
             if (!is_array($rule['effects'] ?? []) || !empty($rule['effects'])) { throw new \InvalidArgumentException('POLICY.UNSUPPORTED_EFFECT'); }
         }
         foreach ($data['bands'] ?? [] as $category => $band) {
             if (!is_string($category) || !preg_match('/^[a-z][a-z0-9_.-]{0,95}$/D', $category) || !is_array($band) || !is_bool($band['calibrated'] ?? false) || !isset($band['review'], $band['block']) || !is_numeric($band['review']) || !is_numeric($band['block']) || !is_finite((float)$band['review']) || !is_finite((float)$band['block']) || $band['review'] < 0 || $band['block'] > 1 || $band['review'] >= $band['block']) { throw new \InvalidArgumentException('POLICY.BAND'); }
         }
         $options = $data['options'] ?? [];
+        if (array_diff(array_keys($options), ['requires_content', 'requires_text', 'consensus', 'failure_mode', 'qr_mode', 'metadata', 'region', 'patterns', 'domains']) || in_array(null, $options, true) || count($data['bands'] ?? []) > 128) { throw new \InvalidArgumentException('POLICY.OPTION'); }
         foreach (['requires_content', 'requires_text', 'consensus'] as $key) { if (isset($options[$key]) && !is_bool($options[$key])) { throw new \InvalidArgumentException('POLICY.OPTION'); } }
         foreach (['failure_mode' => ['QUARANTINE', 'FAIL_OPEN', 'FAIL_CLOSED'], 'qr_mode' => ['allow', 'review', 'block-all'], 'metadata' => ['Privacy Safe']] as $key => $values) { if (isset($options[$key]) && !in_array($options[$key], $values, true)) { throw new \InvalidArgumentException('POLICY.OPTION'); } }
         if (isset($options['region']) && (!is_string($options['region']) || strlen($options['region']) > 80)) { throw new \InvalidArgumentException('POLICY.OPTION'); }
         if (!is_array($options['patterns'] ?? []) || count($options['patterns'] ?? []) > 32 || !is_array($options['domains'] ?? []) || count($options['domains'] ?? []) > 100) { throw new \InvalidArgumentException('POLICY.OPTION'); }
         foreach ($options['patterns'] ?? [] as $category => $pattern) { new \ContentFirewall\Domain\Finding($category, 1); new Condition(['field' => 'text', 'op' => 'regex', 'value' => $pattern]); }
         foreach ($options['domains'] ?? [] as $domain) { if (!is_string($domain) || !preg_match('/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/D', $domain)) { throw new \InvalidArgumentException('POLICY.OPTION'); } }
-        $needsContent = !empty($data['bands']) || !empty($options['patterns']) || isset($options['qr_mode']) || !empty($options['requires_text']);
-        foreach ($data['rules'] as $rule) { $needsContent = $needsContent || $this->usesContent($rule['condition']); }
+        $needsContent = !empty($data['bands']) || !empty($options['patterns']) || isset($options['qr_mode']) || !empty($options['requires_text']) || !empty($options['consensus']);
+        foreach ($data['rules'] as $rule) { if ($rule['enabled'] ?? true) { $needsContent = $needsContent || $this->usesContent($rule['condition']); } }
         if ($needsContent) { $options['requires_content'] = true; }
+        if (!is_string($data['default'] ?? 'ALLOW') || !Action::tryFrom($data['default'] ?? 'ALLOW')) { throw new \InvalidArgumentException('POLICY.SCHEMA'); }
         return new Policy($data['id'], max(1, (int)($data['version'] ?? 1)), $data['name'], $data['rules'], Action::from($data['default'] ?? 'ALLOW'), (bool)($data['shadow'] ?? false), $data['bands'] ?? [], $options);
     }
     private function usesContent(array $condition): bool
     {
         if (isset($condition['children'])) { foreach ($condition['children'] as $child) { if ($this->usesContent($child)) { return true; } } return false; }
-        return preg_match('/^(sexual|violence|hate|self_harm|weapon|pii|qr|ocr_text|authenticity|deepfake)(\.|$)/', $condition['field']) === 1;
+        return EvidenceCoverage::requiresEvidence($condition['field']);
     }
 }

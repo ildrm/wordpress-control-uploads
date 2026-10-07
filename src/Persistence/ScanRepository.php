@@ -4,12 +4,12 @@ namespace ContentFirewall\Persistence;
 use ContentFirewall\Domain\{Decision, FileDescriptor, Finding, Policy, State, UploadContext};
 final class ScanRepository
 {
-    public function __construct(private \wpdb $db, private Tables $tables, private int $siteId) {}
+    public function __construct(private \wpdb $db, private Tables $tables, private int $siteId, private int $privateDays = 7, private int $slaHours = 24) {}
     public function create(FileDescriptor $file, UploadContext $context, Policy $policy, string $privateKey): int
     {
         if ($context->siteId !== $this->siteId) { throw new \RuntimeException('SECURITY.TENANT'); }
         $now = gmdate('Y-m-d H:i:s');
-        $ok = $this->db->insert($this->tables->name('scans'), ['site_id' => $this->siteId, 'correlation' => bin2hex(random_bytes(16)), 'user_id' => $context->userId, 'state' => State::Received->value, 'sha256' => $file->sha256, 'file_name' => $file->name, 'mime' => $file->mime, 'bytes' => $file->bytes, 'private_key' => $privateKey, 'policy_id' => $policy->id, 'policy_version' => $policy->version, 'context_json' => json_encode($context->signals(), JSON_THROW_ON_ERROR), 'signals_json' => '{}', 'decision_json' => '{}', 'created_at' => $now, 'updated_at' => $now, 'expires_at' => gmdate('Y-m-d H:i:s', time() + 7 * DAY_IN_SECONDS)]);
+        $ok = $this->db->insert($this->tables->name('scans'), ['site_id' => $this->siteId, 'correlation' => bin2hex(random_bytes(16)), 'user_id' => $context->userId, 'state' => State::Received->value, 'sha256' => $file->sha256, 'file_name' => $file->name, 'mime' => $file->mime, 'bytes' => $file->bytes, 'private_key' => $privateKey, 'policy_id' => $policy->id, 'policy_version' => $policy->version, 'context_json' => json_encode($context->signals(), JSON_THROW_ON_ERROR), 'signals_json' => '{}', 'decision_json' => '{}', 'created_at' => $now, 'updated_at' => $now, 'expires_at' => gmdate('Y-m-d H:i:s', time() + $this->privateDays * DAY_IN_SECONDS)]);
         if ($ok === false) { throw new \RuntimeException('DATABASE.SCAN_CREATE'); }
         return (int)$this->db->insert_id;
     }
@@ -53,7 +53,7 @@ final class ScanRepository
                 if ($this->db->insert($this->tables->name('findings'), ['scan_id' => $id, 'category' => $finding->category, 'provider' => $finding->provider, 'model' => $finding->model, 'confidence' => $finding->confidence, 'payload' => json_encode($finding, JSON_THROW_ON_ERROR)]) === false) { throw new \RuntimeException('DATABASE.FINDING'); }
             }
             if (in_array($state, [State::Review, State::Quarantined, State::Failed, State::Blocked], true)) {
-                $this->db->query($this->db->prepare("INSERT IGNORE INTO %i (scan_id,notes_json,sla_at) VALUES (%d,%s,%s)", $this->tables->name('cases'), $id, '[]', gmdate('Y-m-d H:i:s', time() + DAY_IN_SECONDS)));
+                $this->db->query($this->db->prepare("INSERT IGNORE INTO %i (scan_id,notes_json,sla_at) VALUES (%d,%s,%s)", $this->tables->name('cases'), $id, '[]', gmdate('Y-m-d H:i:s', time() + $this->slaHours * HOUR_IN_SECONDS)));
             }
             if ($this->db->last_error) { throw new \RuntimeException('DATABASE.COMPLETE'); }
             if ($onComplete) { $onComplete(); }
@@ -75,13 +75,15 @@ final class ScanRepository
         $this->get($id); $rows = $this->db->get_col($this->db->prepare('SELECT payload FROM %i WHERE scan_id=%d ORDER BY id LIMIT 512', $this->tables->name('findings'), $id));
         return array_map(static fn(string $p): Finding => Finding::fromArray(json_decode($p, true, 16, JSON_THROW_ON_ERROR)), $rows);
     }
-    public function page(int $after = 0, int $limit = 30, string $state = '', int $owner = -1, int $userId = -1): array
+    public function page(int $after = 0, int $limit = 30, string $state = '', int $owner = -1, int $userId = -1, ?string $team = null, bool $overdue = false): array
     {
-        $sql = 'SELECT s.id,s.correlation,s.attachment_id,s.user_id,s.state,s.revision,s.file_name,s.mime,s.bytes,s.policy_id,s.policy_version,s.risk,s.created_at,s.updated_at,c.owner_id,c.priority,c.sla_at FROM %i s LEFT JOIN %i c ON c.scan_id=s.id WHERE s.site_id=%d AND s.id>%d';
+        $sql = 'SELECT s.id,s.correlation,s.attachment_id,s.user_id,s.state,s.revision,s.file_name,s.mime,s.bytes,s.policy_id,s.policy_version,s.risk,s.created_at,s.updated_at,c.owner_id,c.team,c.priority,c.sla_at FROM %i s LEFT JOIN %i c ON c.scan_id=s.id WHERE s.site_id=%d AND s.id>%d AND s.metadata_erased=0';
         $args = [$this->tables->name('scans'), $this->tables->name('cases'), $this->siteId, max(0, $after)];
         if ($state !== '') { State::from($state); $sql .= ' AND s.state=%s'; $args[] = $state; }
         if ($owner >= 0) { $sql .= ' AND c.owner_id=%d'; $args[] = $owner; }
         if ($userId >= 0) { $sql .= ' AND s.user_id=%d'; $args[] = $userId; }
+        if ($team !== null) { $sql .= ' AND c.team=%s'; $args[] = $team; }
+        if ($overdue) { $sql .= " AND c.sla_at<UTC_TIMESTAMP() AND s.state IN ('REVIEW_REQUIRED','QUARANTINED','APPEALED','FAILED')"; }
         $sql .= ' ORDER BY s.id ASC LIMIT %d'; $args[] = min(100, max(1, $limit));
         return $this->db->get_results($this->db->prepare($sql, ...$args), ARRAY_A);
     }
@@ -109,6 +111,6 @@ final class ScanRepository
     public function addFingerprint(int $id, string $label): void
     {
         $scan = $this->get($id);
-        $this->db->replace($this->tables->name('fingerprints'), ['sha256' => $scan['sha256'], 'action' => 'BLOCK', 'label' => mb_substr($label, 0, 160), 'created_at' => gmdate('Y-m-d H:i:s')]);
+        if ($this->db->replace($this->tables->name('fingerprints'), ['sha256' => $scan['sha256'], 'action' => 'BLOCK', 'label' => mb_substr($label, 0, 160), 'created_at' => gmdate('Y-m-d H:i:s')]) === false) { throw new \RuntimeException('DATABASE.FINGERPRINT'); }
     }
 }

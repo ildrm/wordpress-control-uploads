@@ -4,10 +4,25 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+msgid "AI use declared"
+msgstr ""
+
+msgid "Accepted scan metadata (days)"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Active policy"
+msgstr ""
+
 msgid "Add condition"
 msgstr ""
 
 msgid "Add nested group"
+msgstr ""
+
+msgid "Add note"
 msgstr ""
 
 msgid "Add rule"
@@ -22,28 +37,97 @@ msgstr ""
 msgid "Allow when content provider fails"
 msgstr ""
 
+msgid "Analysis time (ms)"
+msgstr ""
+
 msgid "Analytics"
+msgstr ""
+
+msgid "Analytics and feedback (days)"
+msgstr ""
+
+msgid "Analyze without publishing"
+msgstr ""
+
+msgid "Analyzing sample…"
 msgstr ""
 
 msgid "Any condition (OR)"
 msgstr ""
 
+msgid "Any reviewer"
+msgstr ""
+
+msgid "Approval publishes a checked derivative. Rejection or quarantine withdraws supported local copies. Deletion removes the retained private original. Cached copies require separate handling."
+msgstr ""
+
+msgid "Approve"
+msgstr ""
+
 msgid "Approve selected"
+msgstr ""
+
+msgid "Assigned reviewer"
+msgstr ""
+
+msgid "Assignment / deadline"
 msgstr ""
 
 msgid "Audit Log"
 msgstr ""
 
+msgid "Audit events (days)"
+msgstr ""
+
+msgid "Back"
+msgstr ""
+
 msgid "Block"
+msgstr ""
+
+msgid "Block fingerprint"
 msgstr ""
 
 msgid "Block from"
 msgstr ""
 
+msgid "Cancel"
+msgstr ""
+
+msgid "Case"
+msgstr ""
+
+msgid "Case assignment"
+msgstr ""
+
+msgid "Case priority"
+msgstr ""
+
+msgid "Case reviewer"
+msgstr ""
+
+msgid "Case team"
+msgstr ""
+
 msgid "Category"
 msgstr ""
 
+msgid "Check environment"
+msgstr ""
+
+msgid "Check the status of your uploads. You can request a moderator review of a held or rejected upload."
+msgstr ""
+
 msgid "Choose a preset…"
+msgstr ""
+
+msgid "Choose policy"
+msgstr ""
+
+msgid "Choose saved view"
+msgstr ""
+
+msgid "Clear saved views"
 msgstr ""
 
 msgid "Close case"
@@ -52,22 +136,49 @@ msgstr ""
 msgid "Comparison"
 msgstr ""
 
+msgid "Completed or failed jobs (days)"
+msgstr ""
+
 msgid "Condition group"
 msgstr ""
 
 msgid "Confidence bands"
 msgstr ""
 
+msgid "Configure persistent private storage and provider credentials in deployment configuration. Settings do not contain secret values."
+msgstr ""
+
 msgid "Configure signed webhooks through deployment configuration. Do not include file content or extracted text in notifications."
+msgstr ""
+
+msgid "Configured"
+msgstr ""
+
+msgid "Confirm decision"
+msgstr ""
+
+msgid "Confirm moderation decision"
 msgstr ""
 
 msgid "Content Firewall"
 msgstr ""
 
+msgid "Content Firewall configuration needs attention"
+msgstr ""
+
 msgid "Content Firewall navigation"
 msgstr ""
 
+msgid "Content Firewall preferences"
+msgstr ""
+
 msgid "Content Firewall queue is operational"
+msgstr ""
+
+msgid "Content Firewall records"
+msgstr ""
+
+msgid "Content Firewall upload control"
 msgstr ""
 
 msgid "Content Firewall upload records"
@@ -76,16 +187,40 @@ msgstr ""
 msgid "Content Firewall worker needs attention"
 msgstr ""
 
+msgid "Content providers"
+msgstr ""
+
 msgid "Content warning: this preview may contain sensitive or disturbing material."
+msgstr ""
+
+msgid "Continue setup"
 msgstr ""
 
 msgid "Created"
 msgstr ""
 
+msgid "Credential state"
+msgstr ""
+
 msgid "Dashboard"
 msgstr ""
 
+msgid "Data retention"
+msgstr ""
+
+msgid "Declared actions"
+msgstr ""
+
 msgid "Default or confidence band"
+msgstr ""
+
+msgid "Delete plugin data on uninstall"
+msgstr ""
+
+msgid "Delete private original"
+msgstr ""
+
+msgid "Deployment configuration required"
 msgstr ""
 
 msgid "Developer Tools"
@@ -100,10 +235,28 @@ msgstr ""
 msgid "Duplicate rule"
 msgstr ""
 
+msgid "Enable PDF reconstruction and page inspection"
+msgstr ""
+
+msgid "Enable offline Content Credentials verification"
+msgstr ""
+
+msgid "Enable these options after the administrator has configured and tested the required local tools. Sampled frames do not inspect every instant. Audio requires a transcription provider. Unsupported redaction stays in review."
+msgstr ""
+
+msgid "Enable video and audio processing"
+msgstr ""
+
 msgid "Enabled"
 msgstr ""
 
 msgid "Enter a reason of at least three characters."
+msgstr ""
+
+msgid "Escalate"
+msgstr ""
+
+msgid "Estimated provider cost"
 msgstr ""
 
 msgid "Every minute"
@@ -115,7 +268,13 @@ msgstr ""
 msgid "File / case"
 msgstr ""
 
+msgid "Finish setup"
+msgstr ""
+
 msgid "First page"
+msgstr ""
+
+msgid "Held or rejected scan metadata (days)"
 msgstr ""
 
 msgid "Hide preview"
@@ -130,19 +289,58 @@ msgstr ""
 msgid "Integrations"
 msgstr ""
 
+msgid "Interval and scene changes"
+msgstr ""
+
+msgid "Issuer"
+msgstr ""
+
+msgid "Keep current policy"
+msgstr ""
+
 msgid "Library scan queued."
+msgstr ""
+
+msgid "Limits are separate for each data class. Raw provider responses and OCR text are never persisted. Published WordPress files are separate from private originals."
 msgstr ""
 
 msgid "Loading Content Firewall…"
 msgstr ""
 
+msgid "Malware scanner"
+msgstr ""
+
 msgid "Match"
+msgstr ""
+
+msgid "Maximum PDF pages"
+msgstr ""
+
+msgid "Maximum image pixels"
+msgstr ""
+
+msgid "Maximum media duration (seconds)"
+msgstr ""
+
+msgid "Maximum sampled video frames"
+msgstr ""
+
+msgid "Maximum upload bytes"
+msgstr ""
+
+msgid "Measured"
 msgstr ""
 
 msgid "Media Library, REST media, AJAX uploads and sideloads use the WordPress upload gateway. Custom integrations must submit files through the governed upload interface."
 msgstr ""
 
 msgid "Media Scanner"
+msgstr ""
+
+msgid "Media processing"
+msgstr ""
+
+msgid "Media safety checks are unavailable. Try again after the administrator restores the service."
 msgstr ""
 
 msgid "Moderation"
@@ -163,13 +361,25 @@ msgstr ""
 msgid "Monitor content decisions"
 msgstr ""
 
+msgid "Monitor decision: security-approved media would be allowed by enforcement."
+msgstr ""
+
+msgid "Monthly provider request limit"
+msgstr ""
+
 msgid "My Uploads"
+msgstr ""
+
+msgid "My uploads"
 msgstr ""
 
 msgid "Negate condition (NOT)"
 msgstr ""
 
 msgid "Next page"
+msgstr ""
+
+msgid "No"
 msgstr ""
 
 msgid "No cases match this view."
@@ -181,19 +391,46 @@ msgstr ""
 msgid "No records yet."
 msgstr ""
 
+msgid "No upload records yet."
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "None configured"
+msgstr ""
+
 msgid "Normalized evidence"
+msgstr ""
+
+msgid "Not configured"
+msgstr ""
+
+msgid "Not established"
+msgstr ""
+
+msgid "Original Content Credentials"
 msgstr ""
 
 msgid "Overview · last 30 days"
 msgstr ""
 
+msgid "Past review deadline"
+msgstr ""
+
+msgid "Permitted file extensions"
+msgstr ""
+
+msgid "Persistent private storage"
+msgstr ""
+
 msgid "Policies"
 msgstr ""
 
-msgid "Policy"
+msgid "Policy name"
 msgstr ""
 
-msgid "Policy name"
+msgid "Policy sample file"
 msgstr ""
 
 msgid "Policy version saved."
@@ -208,6 +445,9 @@ msgstr ""
 msgid "Private moderation cases"
 msgstr ""
 
+msgid "Private originals (days)"
+msgstr ""
+
 msgid "Private review. Clear policy. Safer publishing."
 msgstr ""
 
@@ -220,13 +460,31 @@ msgstr ""
 msgid "Providers"
 msgstr ""
 
+msgid "Publication was held. The post is saved as a draft."
+msgstr ""
+
+msgid "Quarantine"
+msgstr ""
+
 msgid "Queue library scan"
+msgstr ""
+
+msgid "Queue view saved."
+msgstr ""
+
+msgid "Reason for review"
+msgstr ""
+
+msgid "Record"
 msgstr ""
 
 msgid "Referenced media must be approved before publishing."
 msgstr ""
 
 msgid "Refresh"
+msgstr ""
+
+msgid "Reject"
 msgstr ""
 
 msgid "Reject selected"
@@ -238,13 +496,28 @@ msgstr ""
 msgid "Remove rule"
 msgstr ""
 
-msgid "Request failed."
+msgid "Request review"
+msgstr ""
+
+msgid "Require approved media before publishing"
+msgstr ""
+
+msgid "Require malware scanner"
 msgstr ""
 
 msgid "Require remote content moderation"
 msgstr ""
 
+msgid "Required configuration or private storage is unavailable. Uploads remain held until it is restored."
+msgstr ""
+
 msgid "Required moderation reason"
+msgstr ""
+
+msgid "Rescan"
+msgstr ""
+
+msgid "Retain audit records during personal-data erasure"
 msgstr ""
 
 msgid "Reveal sensitive preview"
@@ -253,7 +526,22 @@ msgstr ""
 msgid "Revealed moderation preview"
 msgstr ""
 
+msgid "Review and finish"
+msgstr ""
+
+msgid "Review deadline (UTC)"
+msgstr ""
+
+msgid "Review deadline in hours"
+msgstr ""
+
 msgid "Review from"
+msgstr ""
+
+msgid "Review request"
+msgstr ""
+
+msgid "Review requested"
 msgstr ""
 
 msgid "Risk signal"
@@ -265,19 +553,52 @@ msgstr ""
 msgid "Rules run in priority order. File security checks always apply. Every save creates an immutable version."
 msgstr ""
 
+msgid "Run the worker every minute. Validate your provider accounts and site policy on lawful samples before automatic content enforcement."
+msgstr ""
+
 msgid "Run the worker using system cron for predictable moderation latency."
 msgstr ""
 
 msgid "Run worker batch"
 msgstr ""
 
+msgid "Sample normalized findings"
+msgstr ""
+
+msgid "Sample was not published."
+msgstr ""
+
+msgid "Save assignment"
+msgstr ""
+
+msgid "Save limits and continue"
+msgstr ""
+
 msgid "Save new version"
+msgstr ""
+
+msgid "Save policy and continue"
+msgstr ""
+
+msgid "Save queue view"
 msgstr ""
 
 msgid "Save settings"
 msgstr ""
 
+msgid "Saved queue view"
+msgstr ""
+
+msgid "Saved queue views"
+msgstr ""
+
+msgid "Saved views cleared."
+msgstr ""
+
 msgid "Scan the library in resumable batches. Existing local files remain accessible until a scan decision. Held decisions remove local public derivatives; cached and offloaded copies need separate controls."
+msgstr ""
+
+msgid "Scene changes"
 msgstr ""
 
 msgid "Score and scale"
@@ -286,10 +607,10 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-msgid "Security and moderation records remain subject to the site retention policy. Contact the administrator for a reviewed erasure request."
+msgid "Security Only applies local file checks. Content presets require providers capable of supplying their requested evidence. Missing evidence stays in review."
 msgstr ""
 
-msgid "Security limits apply to every uploader. Configure a persistent private directory and scanner credentials in wp-config.php or environment variables."
+msgid "Security and operating limits"
 msgstr ""
 
 msgid "Select"
@@ -298,16 +619,40 @@ msgstr ""
 msgid "Select case"
 msgstr ""
 
+msgid "Set privacy and limits"
+msgstr ""
+
 msgid "Settings"
 msgstr ""
 
 msgid "Settings saved."
 msgstr ""
 
+msgid "Setup"
+msgstr ""
+
+msgid "Setup is complete. You can review these settings again."
+msgstr ""
+
+msgid "Setup progress saved."
+msgstr ""
+
 msgid "Signal"
 msgstr ""
 
+msgid "Signature and asset binding valid"
+msgstr ""
+
+msgid "Signed audit records are retained until the configured audit retention limit. Private originals and identifying moderation metadata have been erased. Published WordPress media is handled separately by WordPress privacy tools."
+msgstr ""
+
+msgid "Signer trusted"
+msgstr ""
+
 msgid "Simulate"
+msgstr ""
+
+msgid "Simulate a sample file"
 msgstr ""
 
 msgid "Some actions failed: "
@@ -316,7 +661,13 @@ msgstr ""
 msgid "Start from a preset"
 msgstr ""
 
+msgid "Starting policy"
+msgstr ""
+
 msgid "State"
+msgstr ""
+
+msgid "Submit review request"
 msgstr ""
 
 msgid "Synthetic explicit-content score"
@@ -325,16 +676,28 @@ msgstr ""
 msgid "System Health"
 msgstr ""
 
+msgid "Team filter"
+msgstr ""
+
 msgid "Test without publishing"
 msgstr ""
 
+msgid "The administrator-managed upload suspension is retained. Erasing upload records does not remove that security restriction; contact the site administrator to review it."
+msgstr ""
+
 msgid "The operation could not be completed. Refresh the record and check the configuration."
+msgstr ""
+
+msgid "The sample is analyzed privately and never published. Configured providers may process reduced media and consume your request budget. Raw sample files and extracted words are discarded after this test. Use lawful samples only."
 msgstr ""
 
 msgid "Then"
 msgstr ""
 
 msgid "This file could not pass the required safety checks. Contact the site administrator."
+msgstr ""
+
+msgid "This report concerns the private original. Reconstructed public media does not preserve its credentials. An absent credential does not establish that content is fake, and signature validity does not establish signer trust."
 msgstr ""
 
 msgid "This upload is held by the content policy. Reference: %d. Contact the site moderator for review."
@@ -346,7 +709,13 @@ msgstr ""
 msgid "UPLOAD GOVERNANCE"
 msgstr ""
 
+msgid "Unassigned"
+msgstr ""
+
 msgid "Unavailable"
+msgstr ""
+
+msgid "Uniform"
 msgstr ""
 
 msgid "Unscanned"
@@ -355,10 +724,19 @@ msgstr ""
 msgid "Unsupported preview."
 msgstr ""
 
-msgid "Upload moderation"
+msgid "Upload suspension"
+msgstr ""
+
+msgid "Uploader review requests"
+msgstr ""
+
+msgid "Uploads awaiting review stay in private storage. Check your storage, scanner and worker configuration before enabling enforcement."
 msgstr ""
 
 msgid "Uploads held here remain private. Approval publishes a security-checked derivative. Sensitive previews require an explicit reveal."
+msgstr ""
+
+msgid "Uploads per user per hour"
 msgstr ""
 
 msgid "Use the versioned REST API and wp content-firewall commands for automation. Diagnostics exclude credentials, raw files and OCR text."
@@ -370,9 +748,33 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
+msgid "Video sampling"
+msgstr ""
+
 msgid "View"
 msgstr ""
 
+msgid "View name"
+msgstr ""
+
+msgid "We inspect uploads under the site content and security policies. Configured scanning providers may receive private metadata-reduced derivatives. Pending originals, moderation metadata and audit records expire under the configured retention limits. You can request review, access or erasure through the site administrator. Identify the enabled providers and processing regions in this disclosure before publishing it."
+msgstr ""
+
+msgid "WordPress must also permit the file type. Office documents and archives remain held without a supported reconstruction path."
+msgstr ""
+
 msgid "Worker batch finished."
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "Your review request was submitted."
+msgstr ""
+
+msgid "Your upload status"
+msgstr ""
+
+msgid "selected cases"
 msgstr ""
 

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-if (!defined('ABSPATH')) { require (getenv('CF_WP_ROOT') ?: '/var/www/html') . '/wp-load.php'; }
+require __DIR__ . '/bootstrap.php';
 if (wp_get_environment_type() !== 'development') { throw new RuntimeException('Disposable development installation required.'); }
 require_once ABSPATH . 'wp-admin/includes/file.php'; require_once ABSPATH . 'wp-admin/includes/media.php'; require_once ABSPATH . 'wp-admin/includes/image.php';
 use ContentFirewall\Application\{Publisher, ReviewService, ScanService, SecurityPipeline};

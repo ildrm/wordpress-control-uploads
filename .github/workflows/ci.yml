@@ -33,8 +33,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck && npm test && npm run build
       - run: npm audit
-      - run: python3 tools/openapi.py
-      - run: python3 tools/package.py
+      - run: python3 tools/openapi.py --check
+      - run: python3 tools/verify-docs.py
+      - run: python3 tools/verify-release.py
   wordpress:
     runs-on: ubuntu-latest
     strategy:
@@ -54,6 +55,19 @@ jobs:
       - run: docker compose -p cf-test -f compose.test.yml run --rm cli wp plugin activate content-firewall
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/run.php
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/review.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/hardening.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/privacy.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/workflows.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/publication-gate.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/migrations.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/simulation.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/headless.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/leases.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/audit-key.php
+      - run: docker compose -p cf-test -f compose.test.yml exec wordpress sh -c 'apt-get update && apt-get install -y --no-install-recommends ffmpeg poppler-utils'
+      - run: docker compose -p cf-test -f compose.test.yml exec -e CF_FFMPEG_BIN=/usr/bin/ffmpeg -e CF_FFPROBE_BIN=/usr/bin/ffprobe -e CF_PDFINFO_BIN=/usr/bin/pdfinfo -e CF_PDFTOPPM_BIN=/usr/bin/pdftoppm -e CF_PDFTOTEXT_BIN=/usr/bin/pdftotext -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/media-tools.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -e CF_FFMPEG_BIN=/usr/bin/ffmpeg -e CF_FFPROBE_BIN=/usr/bin/ffprobe -e CF_PDFINFO_BIN=/usr/bin/pdfinfo -e CF_PDFTOPPM_BIN=/usr/bin/pdftoppm -e CF_PDFTOTEXT_BIN=/usr/bin/pdftotext -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/processing.php
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/publication-crash.php
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/concurrency.php
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e

@@ -29,14 +29,20 @@ final class Commands
         if ($command === 'scan library') { $batch = bin2hex(random_bytes(16)); $s->jobs->enqueue('library', ['after' => 0, 'batch' => $batch], 'cli:library:' . $batch); return ['queued' => true]; }
         if ($command === 'policy export') { return $s->policies->active()->toArray(); }
         if ($command === 'policy import') {
+            if (is_multisite() && get_site_option('cf_enforced_policy') && !current_user_can('manage_network_options')) { throw new \RuntimeException('SECURITY.NETWORK_POLICY'); }
             $file = $args[0] ?? ''; if (!is_file($file) || filesize($file) > 262144) { throw new \RuntimeException('VALIDATION.POLICY_FILE'); }
             return $s->policies->save(json_decode((string)file_get_contents($file), true, 32, JSON_THROW_ON_ERROR), get_current_user_id())->toArray();
         }
         if ($command === 'database status') { return ['schema' => (int)get_option('cf_schema_version', 0)]; }
-        if ($command === 'database migrate') { $s->tables->migrate(); return ['schema' => 1]; }
+        if ($command === 'database migrate') { $s->tables->migrate(); return ['schema' => \ContentFirewall\Persistence\Tables::VERSION]; }
         if ($command === 'rescan policy') {
             $after = (int)($assoc['after'] ?? 0); $count = 0;
-            foreach ($s->scans->page($after, 100) as $row) { $s->scanner->rescan((int)$row['id']); $count++; $after = (int)$row['id']; } return ['queued' => $count, 'after' => $after];
+            $skipped = [];
+            foreach ($s->scans->page($after, 100) as $row) {
+                $after = (int)$row['id'];
+                if ($row['state'] === 'DELETED' || $s->scans->get($after)['private_key'] === '') { $skipped[] = $after; continue; }
+                $s->scanner->rescan($after); $count++;
+            } return ['queued' => $count, 'skipped' => $skipped, 'after' => $after];
         }
         if ($command === 'network provision') {
             if (!is_multisite()) { throw new \RuntimeException('CONFIGURATION.MULTISITE_REQUIRED'); }

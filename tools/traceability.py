@@ -17,7 +17,7 @@ mapping = {
     'data': ('src/Persistence', 'tests/Integration/run.php', 'docs/DATA-MODEL.md'),
     'analytics': ('src/Analytics', 'tests/Unit/PrivacyAndQualityTest.php', 'docs/MODERATION-QUALITY.md'),
 }
-unimplemented = {34,35,36,37,38,39,65,82,83,85,87,88,95,97,104,116,118,119,124,136,135,166,167}
+unimplemented = {34,35,65,82,83,85,87,88,95,97,104,116,118,119,124,167}
 rows=[]
 for i in range(1,len(sections),3):
     number,title,body=int(sections[i]),sections[i+1],sections[i+2]
@@ -32,6 +32,14 @@ for i in range(1,len(sections),3):
     if 128<=number<=129 or number in {98,171,172}: group='data'
     if 80<=number<=88 or number in {126}: group='analytics'
     module,tests,docs=mapping[group]
+    if number == 49: module,tests,docs='src/Application/FileSimulator.php; src/Application/ScanService.php; assets/src/simulation.tsx','tests/Integration/simulation.php; tests/E2E/admin.spec.ts','docs/REST.md'
+    if number in {121,122}: module,tests,docs='src/Application/HeadlessUpload.php; src/REST/Controller.php','tests/Integration/headless.php; tests/E2E/admin.spec.ts','docs/REST.md'
+    if number == 123: module,tests,docs='src/WordPress/PublicationGate.php','tests/Integration/publication-gate.php; tests/Integration/hardening.php','docs/OPERATIONS.md'
+    if number == 36: module,tests,docs='src/Authenticity/ContentCredentials.php','tests/Unit/ProvenanceTest.php; tests/Integration/provenance-tools.php','docs/MEDIA-PROCESSING.md'
+    if number in {37,38,39}: module,tests,docs='src/Media/TemporalMedia.php; src/Providers/OpenAiTranscription.php','tests/Integration/media-tools.php; tests/Integration/processing.php; tests/Contract/TranscriptionTest.php','docs/MEDIA-PROCESSING.md'
+    if number == 135: module,tests,docs='src/Application/Onboarding.php; assets/src/workflows.tsx','tests/Integration/workflows.php; tests/E2E/admin.spec.ts','docs/UX-SPEC.md'
+    if number in {102,103,162}: module,tests,docs='src/Privacy/RecordLifecycle.php; src/WordPress/PrivacyTools.php; src/Application/Retention.php','tests/Integration/privacy.php','docs/PRIVACY.md'
+    if number == 166: module,tests,docs='src/Configuration/Settings.php; src/Bootstrap/Services.php','tests/Unit/SettingsTest.php; tests/Integration/processing.php','docs/MEDIA-PROCESSING.md'
     status='Not implemented' if number in unimplemented else 'Partial; see evidence'
     if number<7 or number>=177: status='Process / release obligation; open'
     ui='Admin console' if group=='ui' or number in {91,111,112,113,114} else 'API / deployment / module'
@@ -39,7 +47,7 @@ for i in range(1,len(sections),3):
     # One section-level row plus each original statement/item; no claims inferred from headings.
     for j,feature in enumerate([title]+items):
         rows.append({'id':f'CF-{number:03d}-{j:03d}','section':number,'feature':feature,'status':status,'source':module,'tests':tests,'ui':ui,'documentation':docs,'acceptance':'OPEN'})
-header='# Requirements traceability\n\nEvery source statement is retained below with a stable ID. Related module/test paths indicate partial evidence, not full feature coverage. All section acceptance gates remain open until the entire listed behavior is validated. SOURCE-REQUIREMENTS.md preserves the complete user specification. RELEASE-STATUS.md identifies release blockers.\n\n'
+header='# Requirements traceability\n\nEvery source statement is retained below with a stable ID. Related module/test paths indicate partial evidence, not full feature coverage. Current capabilities and limitations are maintained in MEDIA-PROCESSING.md, PRIVACY.md, UX-SPEC.md and RELEASE-STATUS.md. All section acceptance gates remain open until the entire listed behavior is validated. SOURCE-REQUIREMENTS.md preserves the complete user specification. RELEASE-STATUS.md identifies release blockers.\n\n'
 header+='| ID | Feature / source statement | Implementation status | Source module | Tests / evidence | UI | Documentation | Acceptance |\n|---|---|---|---|---|---|---|---|\n'
 for row in rows:
     feature=row['feature'].replace('`','').replace('<','&lt;').replace('>','&gt;')

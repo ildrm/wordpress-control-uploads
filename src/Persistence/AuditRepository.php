@@ -4,7 +4,10 @@ namespace ContentFirewall\Persistence;
 final class AuditRepository
 {
     private const SAFE_FIELDS = ['correlation', 'code', 'action', 'state', 'rule', 'policy', 'version', 'provider', 'model', 'duration_ms', 'job_id', 'revision', 'owner_id', 'count', 'reason_code', 'shadow', 'effects'];
-    public function __construct(private \wpdb $db, private Tables $tables, private int $siteId, private string $key) {}
+    public function __construct(private \wpdb $db, private Tables $tables, private int $siteId, private string $key)
+    {
+        if (strlen($key) < 32 || strlen($key) > 4096) { throw new \RuntimeException('CONFIGURATION.AUDIT_KEY'); }
+    }
     public function record(string $event, int $objectId, int $actorId, array $metadata = []): void
     {
         if (!preg_match('/^[a-z][a-z0-9_.]{1,79}$/D', $event)) { throw new \InvalidArgumentException('VALIDATION.EVENT'); }

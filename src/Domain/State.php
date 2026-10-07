@@ -16,7 +16,7 @@ enum State: string
             self::Preflight => [self::Security, self::Blocked, self::Failed, self::Deleted],
             self::Security => [self::Content, self::Blocked, self::Quarantined, self::Failed, self::Deleted],
             self::Content => [self::Sanitizing, self::Pending, self::Quarantined, self::Review, self::Allowed, self::Blocked, self::Failed, self::Deleted],
-            self::Sanitizing => [self::Sanitized, self::Review, self::Quarantined, self::Blocked, self::Failed, self::Deleted],
+            self::Sanitizing => [self::Sanitized, self::Content, self::Review, self::Quarantined, self::Blocked, self::Failed, self::Deleted],
             self::Pending => [self::Content, self::Review, self::Quarantined, self::Blocked, self::Failed, self::Deleted],
             self::Quarantined, self::Review, self::Failed => [self::Content, self::Allowed, self::Sanitizing, self::Quarantined, self::Blocked, self::Appealed, self::Deleted],
             self::Allowed, self::Sanitized => [self::Content, self::Quarantined, self::Review, self::Blocked, self::Deleted],

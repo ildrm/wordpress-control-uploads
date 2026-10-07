@@ -9,6 +9,8 @@ final class PolicyRepository
     public function save(array $data, int $actorId): Policy
     {
         $policy = (new Schema())->parse($data);
+        if (is_multisite() && get_site_option('cf_enforced_policy')) { throw new \RuntimeException('SECURITY.NETWORK_POLICY'); }
+        if (str_starts_with($policy->id, 'network-')) { throw new \InvalidArgumentException('POLICY.NETWORK_ID_RESERVED'); }
         $version = (int)$this->db->get_var($this->db->prepare('SELECT MAX(version) FROM %i WHERE policy_id=%s', $this->tables->name('policies'), $policy->id)) + 1;
         // Unique key rejects concurrent version creation; caller retries after reloading.
         $data = $policy->toArray(); $data['version'] = $version; $policy = (new Schema())->parse($data);
