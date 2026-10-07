@@ -1,7 +1,8 @@
-=== WordPress Content Firewall ===
+=== Content Firewall ===
 Contributors: ildrm
 Tags: upload, moderation, privacy, security
 Requires at least: 6.8
+Tested up to: 7.0
 Requires PHP: 8.2
 Stable tag: 0.1.0
 License: GPLv2 or later
@@ -19,7 +20,7 @@ External services: optional AWS Rekognition, Google Vision, Azure Content Safety
 
 == Installation ==
 
-1. Install in wp-content/plugins/content-firewall.
+1. Install in wp-content/plugins/content-firewall with content-firewall.php at its root. Deactivate an earlier engineering build before replacement, then reactivate after the main-file rename.
 2. Set CF_PRIVATE_DIR to a persistent private directory outside served roots, owned by PHP with mode 0700.
 3. Activate; begin with Security Only and synthetic testing.
 4. Configure a separate strong CF_AUDIT_KEY, providers and required ClamD scanning using deployment constants/environment variables.
@@ -32,6 +33,10 @@ No. Detection depends on configured, validated scanners. PDFs can use configured
 
 = Are pending uploads public? =
 Uploads intercepted before the WordPress public move remain private. Third-party direct filesystem/offload paths need explicit integration.
+
+== Development Source ==
+
+The plugin includes its readable PHP and assets/src TypeScript source. The administration script is built with tools/build.mjs using the included package.json and package-lock.json. From the extracted plugin directory run npm ci, npm run build and npm run typecheck. Installed development dependencies and tests are excluded from the ZIP. Read docs/PLUGIN-STRUCTURE.md for file organization and docs/TESTING.md for source-checkout validation.
 
 == Changelog ==
 

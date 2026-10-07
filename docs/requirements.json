@@ -2731,11 +2731,11 @@
     "id": "CF-006-002",
     "section": 6,
     "feature": "`plugin.php`",
-    "status": "Process / release obligation; open",
-    "source": "src/Domain",
-    "tests": "tests/Unit/PolicyTest.php",
+    "status": "Original filename superseded by current WordPress structure instruction",
+    "source": "content-firewall.php",
+    "tests": "tests/Integration/structure.php",
     "ui": "API / deployment / module",
-    "documentation": "docs/ARCHITECTURE.md",
+    "documentation": "docs/PLUGIN-STRUCTURE.md",
     "acceptance": "OPEN"
   },
   {

@@ -4,13 +4,15 @@ Version **0.1.0 remains unreleased**. The implemented core has expanded and pass
 
 ## Implemented work
 
-The [22-role engineering review](PRODUCTION-REVIEW.md) records **62 corrected finding groups and bounded feature additions**, alongside the earlier 24 findings. The roles were self-review perspectives used by one engineer; no independent agents or auditor supplied sign-off.
+The [22-role engineering review](PRODUCTION-REVIEW.md) records **64 corrected finding groups and bounded feature additions**, alongside the earlier 24 findings. The roles were self-review perspectives used by one engineer; no independent agents or auditor supplied sign-off.
 
 Implemented paths now cover private upload interception, streaming fingerprints and file/resource checks, immutable policies and required-evidence decisions, text/located image redaction, raster/SVG reconstruction, leased jobs and local publication/withdrawal recovery, human review and appeals, reviewer/team/priority/deadline assignment and escalation, saved views and decision confirmations, resumable Setup, per-class retention and WordPress privacy export/erasure, authenticated headless uploads and shared real-file simulation, classic/featured/scheduled publication checks, audit integrity and outgoing notification jobs, REST/admin/CLI, network policy pins, diagnostics and schema migrations.
 
 Optional default-off native processing inspects every bounded PDF page, sampled video frames and reduced audio clips, then reconstructs supported output. Separate Whisper transcription and pinned offline C2PA verification normalize ephemeral evidence. [MEDIA-PROCESSING.md](MEDIA-PROCESSING.md) defines bounds and limitations: Office/archive CDR, temporal/document redaction and complete temporal alignment are unavailable; valid original credentials do not survive public reconstruction. Production audit services require a separate deployment-owned signing key.
 
-## Executed automated evidence
+## Workflow/media validation before the structure pass
+
+The following matrix was executed before the file-layout corrections. The current structure pass and its exact checks are recorded immediately afterward; the full 13-suite matrix is not claimed as a rerun of the later revision.
 
 | Check | Executed environment | Result |
 |---|---|---|
@@ -35,11 +37,19 @@ The crash fixture sends SIGKILL after public copy and after SQL commit. Recovery
 
 Browser coverage includes policy save/synthetic and genuine multipart simulation, moderation rationale and confirmation, bulk failure/selection/focus, uploader appeals, no-store API responses, Setup, typed media settings, genuine multipart headless receipt, keyboard/RTL and scoped axe checks. Some appeal/failure UI cases use mocked responses; real REST fixtures separately exercise permissions. Manual screen-reader and translated-locale acceptance remains open.
 
+## WordPress structure validation
+
+The current source uses `content-firewall/content-firewall.php`, one author header and the GPL license URL, `includes/autoload.php`, dedicated CSS/JS directories, corresponding TypeScript/build source in the ZIP and explicit Composer installer-name metadata. Namespaced PHP modules and stored policy/table identifiers remain consistent. [PLUGIN-STRUCTURE.md](PLUGIN-STRUCTURE.md) records the handbook sources and earlier-build reactivation procedure.
+
+After these changes, **93 PHP tests / 259 assertions** passed again on PHP 8.2.29, 8.3.28, 8.4.21 and 8.5.8. On each of WordPress **6.8.3, 6.9.4 and 7.0.4**, the structure (10), original integration (21), headless (9) and multisite (22) fixtures passed, plus **two focused Chrome HTTP tests** for plugin discovery/direct-access/asset serving and genuine multisite upload. The complete **14-test Chrome suite** passed on WordPress 7.0.4 multisite. The fixture was returned to 7.0.4.
+
+This HTTP coverage found an unloaded admin quota helper on multisite REST requests; explicit loading fixed it, and CI now repeats the HTTP checks after network conversion. PHP lint, PHPCS, TypeScript/build, eight frontend tests, strict Composer validation and OpenAPI checks passed. PHPStan now also analyzes the includes, main bootstrap and uninstall entries and reports zero errors without new suppressions. Documentation verification covers **31 Markdown files** with the unchanged 2,577-statement ledger, 30 routes, 36 schemas and schema version 2. Distribution verification checks metadata/root layout, matching hashes and 84 runtime symbols, and reproduces the bundled script from the extracted source/build files. Dependency versions were not changed; Composer's lock metadata hash was refreshed using the installed Composer implementation and validated offline.
+
 ## Performance and artifact
 
 The final tiny deterministic policy benchmark on PHP 8.5.8 ran 10,000 iterations: p50 **0.0015 ms**, p95 **0.003292 ms**, peak memory **4 MiB**. The compiled admin script is **36,259 uncompressed bytes**. These exclude decoding, providers, persistence and end-to-end processing. The historical million-row warm local query measurements in [PERFORMANCE-RESULTS.md](PERFORMANCE-RESULTS.md) were not rerun against this final revision and do not establish production throughput.
 
-The distribution is generated at `dist/content-firewall-0.1.0.zip`; its external `SHA256SUMS` and `sbom.json` match the archive. Packaging includes runtime source, compiled assets, guides, catalog and both dependency lockfiles, and excludes development dependencies, tests, source TypeScript and native binaries. The verifier checks paths, required files, checksums, deterministic output and extracted autoloading. The checksum is outside the archive to avoid a self-referential digest.
+The distribution is generated at `dist/content-firewall-0.1.0.zip`; its external `SHA256SUMS` and `sbom.json` match the archive. Packaging includes runtime source, compiled assets, guides, catalog, both dependency lockfiles and corresponding TypeScript source/build script/configuration; it excludes installed development dependencies, tests and native binaries. The verifier checks paths, required files, metadata, checksums, deterministic output, extracted autoloading and source rebuilding. The checksum is outside the archive to avoid a self-referential digest.
 
 ## Remaining product and acceptance work
 

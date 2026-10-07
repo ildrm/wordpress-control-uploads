@@ -24,4 +24,4 @@ Release/documentation: lockfiles, security coding-standard rules, PHPStan, TypeS
 
 A subsequent defect-focused role review and regression pass is recorded in [CODE-REVIEW.md](CODE-REVIEW.md), including fixed findings, current evidence and remaining release blockers.
 
-The latest [22-role production readiness review](PRODUCTION-REVIEW.md) records 62 grouped hardening/workflow/privacy/media changes, required implementation roles and the remaining full-product work. RELEASE-REPORT.md records its final PHP, WordPress, process-kill, concurrency, multisite, browser and packaging evidence. These roles are review perspectives used by one engineer; they are not independent sign-offs.
+The latest [22-role production readiness review](PRODUCTION-REVIEW.md) records 64 grouped hardening/workflow/privacy/media/structure changes, required implementation roles and the remaining full-product work. RELEASE-REPORT.md records its PHP, WordPress, process-kill, concurrency, multisite, browser and packaging evidence and identifies the scope of the subsequent structure pass. These roles are review perspectives used by one engineer; they are not independent sign-offs.

@@ -252,7 +252,7 @@ Every source statement is retained below with a stable ID. Related module/test p
 | CF-005-036 | Use WordPress APIs where they provide important security or compatibility guarantees. | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
 | CF-006-000 | SUGGESTED PROJECT ARCHITECTURE | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
 | CF-006-001 | Use a modular structure comparable to: | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
-| CF-006-002 | plugin.php | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
+| CF-006-002 | plugin.php | Original filename superseded by current WordPress structure instruction | content-firewall.php | tests/Integration/structure.php | API / deployment / module | docs/PLUGIN-STRUCTURE.md | OPEN |
 | CF-006-003 | src/ | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
 | CF-006-004 | src/Bootstrap/ | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |
 | CF-006-005 | src/Domain/ | Process / release obligation; open | src/Domain | tests/Unit/PolicyTest.php | API / deployment / module | docs/ARCHITECTURE.md | OPEN |

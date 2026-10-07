@@ -2,6 +2,14 @@
 
 ## 0.1.0 — unreleased engineering build
 
+### WordPress file structure corrections (2026-10-07)
+
+- Rename the single plugin entry to content-firewall.php, move the autoloader to includes/ and separate compiled CSS/JS under assets/css and assets/js.
+- Match the display/readme name to Content Firewall, preserve the author's metadata, remove the duplicate Author field and supply the GPL license URL and tested WordPress version.
+- Include corresponding TypeScript source, the build script and locked configuration in the ZIP; verify that the extracted source reproduces the bundled script.
+- Update lifecycle basenames, asset URLs, tooling, fixture bootstraps and guides; add real WordPress discovery/metadata/lifecycle/asset checks to CI.
+- Load the multisite upload-quota helper explicitly for headless REST requests; add browser regression checks after network conversion.
+
 ### Workflow, privacy and media implementation (2026-10-07)
 
 - Add resumable Setup, typed privacy/operating limits, reviewer/team/priority/deadline assignment, overdue escalation, saved views and explicit decision confirmations.

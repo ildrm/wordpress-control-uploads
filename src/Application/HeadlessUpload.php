@@ -11,6 +11,8 @@ final class HeadlessUpload
         if ($this->s->siteId !== get_current_blog_id()) { throw new \RuntimeException('SECURITY.TENANT'); }
         $user = wp_get_current_user(); if (!$user->ID || !current_user_can('upload_files')) { throw new \RuntimeException('SECURITY.UPLOAD_PERMISSION'); }
         if (get_user_meta($user->ID, 'cf_upload_suspended', true)) { throw new \RuntimeException('SECURITY.UPLOAD_SUSPENDED'); }
+        // REST requests do not load admin helpers the way wp-admin and WP-CLI do.
+        if (is_multisite() && !function_exists('upload_is_user_over_quota')) { require_once ABSPATH . 'wp-admin/includes/ms.php'; }
         if (!is_file($path) || filesize($path) > wp_max_upload_size() || (is_multisite() && upload_is_user_over_quota(false))) { throw new \RuntimeException('SECURITY.UPLOAD_LIMIT'); }
         $allowed = wp_check_filetype_and_ext($path, $name);
         if (empty($allowed['ext']) || empty($allowed['type'])) { throw new \RuntimeException('SECURITY.UPLOAD_TYPE'); }

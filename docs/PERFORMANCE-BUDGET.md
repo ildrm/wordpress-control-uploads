@@ -6,4 +6,4 @@ Streaming file hashes/copies, bounded image decoding, cheap-first rules, per-pro
 
 Run `php tests/Performance/benchmark.php` for local CPU measurements. Run the real database benchmark in the isolated WordPress environment for 100, 10K, 100K and 1M rows. Synthetic workloads must identify their schema, distributions and query plans. The local benchmark does not establish network/provider or large-site latency.
 
-Measure build bytes using `wc -c assets/admin.js`. Memory and upload size limits are deployment-specific; test low-memory configurations before rollout. Admin evidence must include the Media Library query count and aggregation plans.
+Measure build bytes using `wc -c assets/js/admin.js`. Memory and upload size limits are deployment-specific; test low-memory configurations before rollout. Admin evidence must include the Media Library query count and aggregation plans.

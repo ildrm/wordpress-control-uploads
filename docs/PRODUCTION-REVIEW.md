@@ -116,6 +116,8 @@ The user's follow-up requested implementation of the remaining work and correcti
 | PR-60 | Receipt validates active/context tenant before file/policy writes; cached receipt, simulation, headless, onboarding and privacy services have explicit cross-blog tests. | Integration/multisite |
 | PR-61 | File simulation honors exact blocklists before paid processing; monitor enforcement and post-action focus are explicit in the UI. | Integration/simulation, browser focus checks |
 | PR-62 | A failed transaction start cannot lease work; concurrent-claim testing uses a separate temporary table and verifies the exact expected IDs without acknowledging other fixtures' jobs. | JobRepository, Integration/concurrency |
+| PR-63 | Generic root entry, duplicate author/missing license URL, mixed asset paths and omitted corresponding script source are corrected; one slug-named bootstrap, includes autoloader, dedicated asset directories and rebuildable packaged source are verified. | Integration/structure, browser canonical-entry check, verify-release, PLUGIN-STRUCTURE |
+| PR-64 | Multisite headless HTTP requests could call an unloaded admin quota helper; the required WordPress include is now explicit and CI exercises genuine HTTP uploads after network conversion. | HeadlessUpload, browser headless check on three WordPress versions |
 
 No independent agents or external auditors were used. These are engineering self-review perspectives. Current executed counts/versions appear only in RELEASE-REPORT.md; earlier counts above describe the initial hardening pass.
 

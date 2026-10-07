@@ -2,7 +2,7 @@
 
 This engineering build has open production acceptance gates. Use an isolated development/staging site; read RELEASE-STATUS.md first.
 
-1. Build assets with `npm ci && npm run build`. Install the generated ZIP through WordPress Plugins, or place the source in `wp-content/plugins/content-firewall`.
+1. Build assets with `npm ci && npm run build`. Install the generated ZIP through WordPress Plugins, or place the source in `wp-content/plugins/content-firewall`, with `content-firewall.php` directly inside that directory. [PLUGIN-STRUCTURE.md](PLUGIN-STRUCTURE.md) describes the canonical layout. If replacing the earlier engineering build, deactivate it first and reactivate after replacement because its main-file basename changed.
 2. Configure a persistent private path outside served roots:
 
 ```php

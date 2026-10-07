@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-$root = $argv[1] ?? ''; if (!is_file($root . '/plugin.php')) { throw new RuntimeException('Invalid package root'); }
-require $root . '/autoload.php'; $count = 0;
+$root = $argv[1] ?? ''; if (!is_file($root . '/content-firewall.php')) { throw new RuntimeException('Invalid package root'); }
+require $root . '/includes/autoload.php'; $count = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/src', FilesystemIterator::SKIP_DOTS)) as $file) {
     if ($file->getExtension() !== 'php') { continue; }
     $relative = substr($file->getPathname(), strlen($root . '/src/'), -4); $class = 'ContentFirewall\\' . str_replace('/', '\\', $relative);

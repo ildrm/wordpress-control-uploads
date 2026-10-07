@@ -46,7 +46,10 @@ for i in range(1,len(sections),3):
     items=[line.strip().lstrip('- ').replace('|','/') for line in body.splitlines() if line.strip() and line.strip()!='---']
     # One section-level row plus each original statement/item; no claims inferred from headings.
     for j,feature in enumerate([title]+items):
-        rows.append({'id':f'CF-{number:03d}-{j:03d}','section':number,'feature':feature,'status':status,'source':module,'tests':tests,'ui':ui,'documentation':docs,'acceptance':'OPEN'})
+        row={'id':f'CF-{number:03d}-{j:03d}','section':number,'feature':feature,'status':status,'source':module,'tests':tests,'ui':ui,'documentation':docs,'acceptance':'OPEN'}
+        if number==6 and j==2:
+            row.update(status='Original filename superseded by current WordPress structure instruction',source='content-firewall.php',tests='tests/Integration/structure.php',documentation='docs/PLUGIN-STRUCTURE.md')
+        rows.append(row)
 header='# Requirements traceability\n\nEvery source statement is retained below with a stable ID. Related module/test paths indicate partial evidence, not full feature coverage. Current capabilities and limitations are maintained in MEDIA-PROCESSING.md, PRIVACY.md, UX-SPEC.md and RELEASE-STATUS.md. All section acceptance gates remain open until the entire listed behavior is validated. SOURCE-REQUIREMENTS.md preserves the complete user specification. RELEASE-STATUS.md identifies release blockers.\n\n'
 header+='| ID | Feature / source statement | Implementation status | Source module | Tests / evidence | UI | Documentation | Acceptance |\n|---|---|---|---|---|---|---|---|\n'
 for row in rows:

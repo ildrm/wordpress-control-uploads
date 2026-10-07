@@ -53,6 +53,7 @@ jobs:
       - run: docker compose -p cf-test -f compose.test.yml run --rm cli wp core install --url=http://localhost:8887 --title='Firewall Test' --admin_user=admin --admin_password=cf-local-test-password --admin_email=admin@example.test --skip-email
       - run: docker compose -p cf-test -f compose.test.yml run --rm cli wp core update-db
       - run: docker compose -p cf-test -f compose.test.yml run --rm cli wp plugin activate content-firewall
+      - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/structure.php
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/run.php
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/review.php
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/hardening.php
@@ -73,5 +74,6 @@ jobs:
       - run: npm run test:e2e
       - run: docker compose -p cf-test -f compose.test.yml run --rm cli wp core multisite-convert --title='Firewall Network' --base=/
       - run: docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/multisite.php
+      - run: npx playwright test --grep 'Headless upload|canonical entry'
       - if: always()
         run: docker compose -p cf-test -f compose.test.yml down

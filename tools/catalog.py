@@ -1,7 +1,7 @@
 from pathlib import Path
 import re,json
 strings=set()
-for file in list(Path('src').rglob('*.php'))+[Path('plugin.php')]:
+for file in list(Path('src').rglob('*.php'))+[Path('content-firewall.php')]:
     strings.update(re.findall(r"(?:__|esc_html__|esc_attr__)\('([^'\\]*(?:\\.[^'\\]*)*)',\s*'content-firewall'",file.read_text()))
 for file in Path('assets/src').rglob('*.tsx'):
     strings.update(re.findall(r"__\('([^'\\]*(?:\\.[^'\\]*)*)'\)",file.read_text()))

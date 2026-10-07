@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 // Standalone benign native-tool acceptance; use explicit tool paths, never production uploads.
-require __DIR__ . '/../../autoload.php';
+require __DIR__ . '/../../includes/autoload.php';
 use ContentFirewall\Domain\{Finding, Policy, ProviderResult};
 use ContentFirewall\Media\{DocumentMedia, ImagePdf, TemporalMedia};
 use ContentFirewall\Security\{FileInspector, PrivateStorage};

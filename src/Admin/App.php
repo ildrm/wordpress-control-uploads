@@ -28,8 +28,8 @@ final class App
     {
         if ($hook !== 'toplevel_page_content-firewall') { return; }
         $base = plugin_dir_url($this->file);
-        wp_enqueue_style('cf-admin', $base . 'assets/admin.css', ['wp-components'], '0.1.0');
-        wp_enqueue_script('cf-admin', $base . 'assets/admin.js', ['wp-element', 'wp-components', 'wp-i18n', 'wp-api-fetch'], '0.1.0', true);
+        wp_enqueue_style('cf-admin', $base . 'assets/css/admin.css', ['wp-components'], '0.1.0');
+        wp_enqueue_script('cf-admin', $base . 'assets/js/admin.js', ['wp-element', 'wp-components', 'wp-i18n', 'wp-api-fetch'], '0.1.0', true);
         $caps = []; foreach (\ContentFirewall\WordPress\Lifecycle::CAPS as $cap) { $caps[$cap] = current_user_can($cap); }
         wp_add_inline_script('cf-admin', 'window.CFConfig=' . wp_json_encode(['root' => rest_url('content-firewall/v1'), 'nonce' => wp_create_nonce('wp_rest'), 'caps' => $caps, 'locale' => get_locale(), 'timezone' => wp_timezone_string(), 'rtl' => is_rtl()]) . ';', 'before');
         wp_set_script_translations('cf-admin', 'content-firewall', dirname($this->file) . '/languages');

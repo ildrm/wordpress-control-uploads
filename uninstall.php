@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 if (!defined('WP_UNINSTALL_PLUGIN')) { exit; }
-require_once __DIR__ . '/autoload.php';
+require_once __DIR__ . '/includes/autoload.php';
 // Audit and private media are retained unless the operator explicitly opted into removal.
 $remove = static function (): void {
     $settings = get_option('cf_settings', []); if (!($settings['delete_on_uninstall'] ?? false)) { return; }

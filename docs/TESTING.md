@@ -48,7 +48,7 @@ docker compose -p cf-test -f compose.test.yml exec wordpress sh -c 'apt-get upda
 Run database-mutating suites sequentially. The explicit native paths are used by processing fixtures and need not be enabled in the saved product settings:
 
 ```sh
-for suite in run review hardening privacy workflows migrations publication-gate simulation headless leases audit-key processing publication-crash concurrency
+for suite in structure run review hardening privacy workflows migrations publication-gate simulation headless leases audit-key processing publication-crash concurrency
 do
   docker compose -p cf-test -f compose.test.yml exec \
     -e CF_FFMPEG_BIN=/usr/bin/ffmpeg -e CF_FFPROBE_BIN=/usr/bin/ffprobe \
@@ -81,9 +81,10 @@ Convert only the disposable fixture after single-site/browser work is complete:
 ```sh
 docker compose -p cf-test -f compose.test.yml run --rm cli wp core multisite-convert --title='Firewall Network' --base=/
 docker compose -p cf-test -f compose.test.yml exec -u www-data wordpress php /var/www/html/wp-content/plugins/content-firewall/tests/Integration/multisite.php
+npm run test:e2e -- --grep 'Headless upload|canonical entry'
 ```
 
-The CI WordPress matrix uses separate jobs for 6.8.3, 6.9.4 and 7.0.4. It executes native, concurrency, browser and multisite checks in that order. Minimum-version declarations do not promise untested third-party integrations. Stop the containers only after completing the sequence.
+The CI WordPress matrix uses separate jobs for 6.8.3, 6.9.4 and 7.0.4. It executes native, concurrency, browser and multisite checks in that order, then repeats the focused HTTP checks after conversion. Those requests exercise loading dependencies that standalone/CLI fixtures can incidentally preload. Minimum-version declarations do not promise untested third-party integrations. Stop the containers only after completing the sequence.
 
 ## Offline Content Credentials and distribution
 
@@ -97,4 +98,4 @@ php tests/Integration/provenance-tools.php
 python3 tools/verify-release.py
 ```
 
-Use public test fixtures, never deploy fixture signing keys. The release verifier builds twice, compares hashes, checks ZIP paths/required files/checksums/dependency inventory and loads the extracted runtime without Composer/vendor. Native executables, development dependencies, tests and source TypeScript are excluded. Distribution checks do not certify moderation quality or deployment readiness; remaining product and acceptance gates are in [RELEASE-STATUS.md](RELEASE-STATUS.md).
+Use public test fixtures, never deploy fixture signing keys. The release verifier builds twice, compares hashes, checks ZIP paths/required files/checksums/dependency inventory and loads the extracted runtime without Composer/vendor. Native executables, installed development dependencies and tests are excluded. Corresponding TypeScript source, the build script and locked build configuration are included; the verifier reproduces the bundled JavaScript from the extracted source using the checkout's locked dependencies. Distribution checks do not certify moderation quality or deployment readiness; remaining product and acceptance gates are in [RELEASE-STATUS.md](RELEASE-STATUS.md).

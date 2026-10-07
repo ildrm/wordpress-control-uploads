@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 // Optional offline official fixtures; configure paths explicitly. No binary or signing key is bundled.
-require __DIR__ . '/../../autoload.php';
+require __DIR__ . '/../../includes/autoload.php';
 use ContentFirewall\Authenticity\ContentCredentials;
 use ContentFirewall\Security\{FileInspector, PrivateStorage};
 $root = sys_get_temp_dir() . '/cf-provenance-tool-' . bin2hex(random_bytes(6)); mkdir($root, 0700); $storage = new PrivateStorage($root); $passed = 0;

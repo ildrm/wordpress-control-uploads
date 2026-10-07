@@ -3,6 +3,20 @@ import AxeBuilder from '@axe-core/playwright';
 test.beforeEach(async ({page}) => {
   await page.request.get('/wp-login.php'); await page.request.post('/wp-login.php', {form: {log:'admin',pwd:'cf-local-test-password',testcookie:'1','wp-submit':'Log In'}}); await page.goto('/wp-admin/admin.php?page=content-firewall',{waitUntil:'domcontentloaded'}); await expect(page.getByRole('heading',{name:'Content Firewall',exact:true})).toBeVisible();
 });
+test('WordPress lists the canonical entry, serves its assets and guards PHP entrypoints', async ({page}) => {
+  for (const file of ['content-firewall.php','includes/autoload.php']) {
+    const response=await page.request.get('/wp-content/plugins/content-firewall/'+file);
+    expect(response.status()).toBe(200);expect(await response.text()).toBe('');
+  }
+  for (const file of ['assets/js/admin.js','assets/css/admin.css']) {
+    const response=await page.request.get('/wp-content/plugins/content-firewall/'+file);
+    expect(response.status()).toBe(200);expect((await response.body()).length).toBeGreaterThan(0);
+  }
+  await page.goto('/wp-admin/plugins.php');
+  const row=page.locator('tr[data-plugin="content-firewall/content-firewall.php"]');
+  await expect(row).toBeVisible();await expect(row.locator('.plugin-title strong')).toHaveText('Content Firewall');
+  await expect(page.locator('tr[data-plugin="content-firewall/plugin.php"]')).toHaveCount(0);
+});
 test('Policy builder validates and saves a nested rule and simulates', async ({page}) => {
   await page.getByRole('button',{name:'Policies',exact:true}).click(); await page.getByLabel('Start from a preset').selectOption({label:'Security Only'}); await page.getByRole('button',{name:'Add rule',exact:true}).click(); await page.getByRole('button',{name:'Add nested group',exact:true}).first().click(); await page.getByLabel('Value',{exact:true}).last().fill('avatar'); await page.getByLabel('Synthetic explicit-content score').fill('0.9'); await page.getByRole('button',{name:'Simulate',exact:true}).click(); await expect(page.getByRole('status').last()).toContainText('REVIEW'); await page.getByRole('button',{name:'Save new version',exact:true}).click(); await expect(page.getByRole('status').first()).toContainText('saved');
 });
@@ -79,6 +93,6 @@ test('Headless upload accepts a real multipart file and returns safe private sta
   const nonce=await page.evaluate(()=>(window as unknown as {CFConfig:{nonce:string}}).CFConfig.nonce);
   // A harmless PNG permits the native HTTP-upload boundary to be exercised without a provider account.
   const response=await page.request.post('/?rest_route=/content-firewall/v1/uploads',{headers:{'X-WP-Nonce':nonce},multipart:{file:{name:'headless-fixture.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aWQAAAABJRU5ErkJggg==','base64')}}});
-  expect(response.status()).toBe(200);const value=await response.json();expect(value.attachment_id).toBe(0);expect(value).not.toHaveProperty('findings');expect(value).not.toHaveProperty('private_key');
+  expect(response.status(),await response.text()).toBe(200);const value=await response.json();expect(value.attachment_id).toBe(0);expect(value).not.toHaveProperty('findings');expect(value).not.toHaveProperty('private_key');
   const status=await page.request.get('/?rest_route=/content-firewall/v1/uploads/'+value.id,{headers:{'X-WP-Nonce':nonce}});expect(status.ok()).toBe(true);expect((await status.json()).id).toBe(value.id);expect(status.headers()['cache-control']).toContain('no-store');
 });

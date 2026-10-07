@@ -6,6 +6,8 @@ The 2026-10-07 hardening pass adds a shared Configuration/Settings boundary, Med
 
 The main plugin registers lifecycle hooks and a small loader. Frontend requests register upload hooks without creating the database/provider graph. `Services` is constructed lazily for the current blog and rebuilt when validated settings change. Tables use the current `$wpdb->prefix` and scan/queue access additionally checks the current site ID.
 
+The single root bootstrap is `content-firewall.php`; `uninstall.php` is the only other root PHP file. The loader lives in `includes/autoload.php`, runtime classes in PSR-4 `src/`, compiled assets in `assets/css` and `assets/js`, and their corresponding TypeScript in `assets/src`. [PLUGIN-STRUCTURE.md](PLUGIN-STRUCTURE.md) records the WordPress conventions and distribution checks.
+
 Upload flow: authorization and atomic quota → filename/size/type/header validation → streaming SHA-256 → private immutable snapshot → security inspection → policy → optional asynchronous provider job → review or checked derivative publication. Unknown scanner evidence and malformed responses must not become negative findings. Security blocks cannot be relaxed by monitor mode or trusted roles.
 
 The public WordPress uploads directory only receives accepted derivatives through covered upload hooks. An asynchronous upload returns a private case reference; it does not create a public placeholder attachment. Files written directly by third-party code bypass these hooks; post-insertion verification is compensating detection and cannot eliminate an earlier public exposure window.
